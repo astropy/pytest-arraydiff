@@ -2,10 +2,6 @@ language: c
 
 sudo: false
 
-os:
-    - linux
-    - osx
-
 env:
   global:
     - CONDA_DEPENDENCIES="pytest numpy astropy"
