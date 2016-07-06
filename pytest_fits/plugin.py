@@ -51,11 +51,7 @@ def compare_fits_files(filename1, filename2, atol=None, rtol=1e-7):
     if atol is not None:
         raise NotImplementedError("atol argument not yet supported")
 
-    filename1 = 'galactic_2d.fits'
-    filename2 = 'equatorial_3d.fits'
-
     diff = FITSDiff(filename1, filename2, tolerance=rtol)
-    report = diff.report()
 
     return diff.identical, diff.report()
 
@@ -95,8 +91,8 @@ def pytest_configure(config):
             baseline_dir = os.path.abspath(generate_dir)
 
         config.pluginmanager.register(FITSComparison(config,
-                                                      baseline_dir=baseline_dir,
-                                                      generate_dir=generate_dir))
+                                                     baseline_dir=baseline_dir,
+                                                     generate_dir=generate_dir))
 
 
 class FITSComparison(object):
@@ -116,7 +112,11 @@ class FITSComparison(object):
         atol = compare.kwargs.get('atol', None)
         rtol = compare.kwargs.get('rtol', 1e-7)
 
+        single_reference = compare.kwargs.get('single_reference', False)
+
         writeto_kwargs = compare.kwargs.get('writeto_kwargs', {})
+        if not 'clobber' in writeto_kwargs:
+            writeto_kwargs['clobber'] = True
 
         original = item.function
 
@@ -145,7 +145,11 @@ class FITSComparison(object):
             # Find test name to use as plot name
             filename = compare.kwargs.get('filename', None)
             if filename is None:
-                filename = original.__name__ + '.fits'
+                if single_reference:
+                    filename = original.__name__ + '.fits'
+                else:
+                    filename = item.name + '.fits'
+                    filename = filename.replace('[', '_').replace(']', '_')
 
             # What we do now depends on whether we are generating the reference
             # files or simply running the test.
