@@ -1,5 +1,5 @@
-[![Travis Build Status](https://travis-ci.org/astrofrog/pytest-mpl.svg?branch=master)](https://travis-ci.org/astrofrog/pytest-mpl)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/mf7hs44scg5mvcyo?svg=true)](https://ci.appveyor.com/project/astrofrog/pytest-mpl)
+[![Travis Build Status](https://travis-ci.org/astrofrog/pytest-fits.svg?branch=master)](https://travis-ci.org/astrofrog/pytest-fits)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/kwbvm9u79mrq6i0w?svg=true)](https://ci.appveyor.com/project/astrofrog/pytest-fits)
 
 About
 -----
@@ -26,7 +26,7 @@ This plugin is compatible with Python 2.7, and 3.3 and later, and requires
 
 To install, you can do:
 
-    pip install https://github.com/astrofrog/pytest-mpl/archive/master.zip
+    pip install https://github.com/astrofrog/pytest-fits/archive/master.zip
 
 You can check that the plugin is registered with pytest by doing:
 
