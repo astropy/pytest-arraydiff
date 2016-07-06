@@ -37,11 +37,8 @@ import shutil
 import tempfile
 import warnings
 
-from astropy.io.fits.diff import FITSDiff
-
-
-
 import pytest
+from astropy.io.fits.diff import FITSDiff
 
 if sys.version_info[0] == 2:
     from urllib import urlopen
@@ -167,6 +164,7 @@ class FITSComparison(object):
                     baseline_file_ref = os.path.abspath(os.path.join(os.path.dirname(item.fspath.strpath), baseline_dir, filename))
 
                 if not os.path.exists(baseline_file_ref):
+                    print("ICI")
                     raise Exception("""FITS file not found for comparison test
                                     Generated FITS file:
                                     \t{test}
