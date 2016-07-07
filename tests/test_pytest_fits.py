@@ -18,6 +18,12 @@ def test_succeeds_func():
     return fits.PrimaryHDU(data, header)
 
 
+@pytest.mark.fits_compare(baseline_dir=baseline_dir)
+def test_succeeds_func_array():
+    data = np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return data
+
+
 class TestClass(object):
 
     @pytest.mark.fits_compare(baseline_dir=baseline_dir)

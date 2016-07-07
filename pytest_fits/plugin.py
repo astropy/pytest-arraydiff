@@ -38,6 +38,8 @@ import tempfile
 import warnings
 
 import pytest
+import numpy as np
+from astropy.io.fits import PrimaryHDU
 from astropy.io.fits.diff import FITSDiff
 
 if sys.version_info[0] == 2:
@@ -141,6 +143,10 @@ class FITSComparison(object):
                 hdu = original(*args[1:], **kwargs)
             else:  # function
                 hdu = original(*args, **kwargs)
+
+            # If a Numpy array was returned, wrap in FITS
+            if isinstance(hdu, np.ndarray):
+                hdu = PrimaryHDU(hdu)
 
             # Find test name to use as plot name
             filename = compare.kwargs.get('filename', None)

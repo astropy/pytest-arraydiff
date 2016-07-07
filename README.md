@@ -6,7 +6,7 @@ About
 
 This is a [py.test](http://pytest.org) plugin to faciliate the generation and
 comparison of FITS files produced during tests (this is a spin-off from
-[pytest-mpl](https://github.com/astrofrog/pytest-mpl)).
+[pytest-fits](https://github.com/astrofrog/pytest-fits)).
 
 The basic idea is that you can write a test that generates an Astropy HDU or
 HDUList object. You can then either run the tests in a mode to **generate**
@@ -43,7 +43,7 @@ Using
 
 To use, you simply need to mark the function where you want to compare images
 using ``@pytest.mark.fits_compare``, and make sure that the function
-returns an Astropy HDU or HDUList object::
+returns an Astropy HDU or HDUList object, or a plain Numpy array::
 
     python
     import pytest
