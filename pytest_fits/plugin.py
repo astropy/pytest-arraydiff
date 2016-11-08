@@ -156,6 +156,7 @@ class FITSComparison(object):
                 else:
                     filename = item.name + '.fits'
                     filename = filename.replace('[', '_').replace(']', '_')
+                    filename = filename.replace('_.fits', '.fits')
 
             # What we do now depends on whether we are generating the reference
             # files or simply running the test.
