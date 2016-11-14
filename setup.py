@@ -1,6 +1,6 @@
 from setuptools import setup
 
-from pytest_fits import __version__
+from pytest_arraydiff import __version__
 
 try:
     import pypandoc
@@ -12,12 +12,12 @@ except (IOError, ImportError):
 setup(
     version=__version__,
     url="https://github.com/astrofrog/pytest-fits",
-    name="pytest-fits",
-    description='pytest plugin to help with comparing FITS output from tests',
+    name="pytest-arraydiff",
+    description='pytest plugin to help with comparing array output from tests',
     long_description=long_description,
-    packages = ['pytest_fits'],
+    packages = ['pytest_arraydiff'],
     license='BSD',
     author='Thomas Robitaille',
     author_email='thomas.robitaille@gmail.com',
-    entry_points = {'pytest11': ['pytest_fits = pytest_fits.plugin',]},
+    entry_points = {'pytest11': ['pytest_arraydiff = pytest_arraydiff.plugin',]},
 )
