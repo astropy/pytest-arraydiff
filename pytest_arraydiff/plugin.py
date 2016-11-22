@@ -98,6 +98,8 @@ def pytest_addoption(parser):
                     help="directory to generate reference files in, relative to location where py.test is run", action='store')
     group.addoption('--arraydiff-reference-path',
                     help="directory containing reference files, relative to location where py.test is run", action='store')
+    group.addoption('--arraydiff-default-format',
+                    help="Default format for the reference arrays (can be 'fits' or 'text' currently)")
 
 
 def pytest_configure(config):
@@ -115,17 +117,21 @@ def pytest_configure(config):
         if generate_dir is not None:
             reference_dir = os.path.abspath(generate_dir)
 
+        default_format = config.getoption("--arraydiff-default-format") or 'text'
+
         config.pluginmanager.register(ArrayComparison(config,
                                                       reference_dir=reference_dir,
-                                                      generate_dir=generate_dir))
+                                                      generate_dir=generate_dir,
+                                                      default_format=default_format))
 
 
 class ArrayComparison(object):
 
-    def __init__(self, config, reference_dir=None, generate_dir=None):
+    def __init__(self, config, reference_dir=None, generate_dir=None, default_format='text'):
         self.config = config
         self.reference_dir = reference_dir
         self.generate_dir = generate_dir
+        self.default_format = default_format
 
     def pytest_runtest_setup(self, item):
 
@@ -134,7 +140,7 @@ class ArrayComparison(object):
         if compare is None:
             return
 
-        file_format = compare.kwargs.get('file_format', 'text')
+        file_format = compare.kwargs.get('file_format', self.default_format)
 
         if file_format not in FORMATS:
             raise ValueError("Unknown format: {0}".format(file_format))

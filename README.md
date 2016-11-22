@@ -91,6 +91,10 @@ def test_image():
     ...
 ```
 
+The default file format can also be specified using the
+``--arraydiff-default-format=<format>`` flag when running ``py.test``, and
+``<format>`` should be either ``fits`` or ``text``.
+
 The supported formats at this time are ``text`` and ``fits``, and contributions
 for other formats are welcome. The default format is ``text``.
 
