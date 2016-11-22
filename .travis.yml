@@ -19,3 +19,4 @@ install:
 script:
    - cd tests
    - py.test --fits
+   - python setup.py check --restructuredtext

@@ -46,7 +46,7 @@ Using
 
 To use, you simply need to mark the function where you want to compare images
 using ``@pytest.mark.array_compare``, and make sure that the function
-returns a plain Numpy array::
+returns a plain Numpy array:
 
     python
     import pytest
