@@ -17,6 +17,6 @@ install:
     - python setup.py install
 
 script:
+   - python setup.py check --restructuredtext
    - cd tests
    - py.test --arraydiff
-   - python setup.py check --restructuredtext
