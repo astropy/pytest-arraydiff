@@ -18,5 +18,5 @@ install:
 
 script:
    - cd tests
-   - py.test --fits
+   - py.test --arraydiff
    - python setup.py check --restructuredtext

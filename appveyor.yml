@@ -29,5 +29,4 @@ build: false
 
 test_script:
   - "%CMD_IN_ENV% cd tests"
-  - "%CMD_IN_ENV% py.test --fits"
-
+  - "%CMD_IN_ENV% py.test --arraydiff"
