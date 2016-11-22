@@ -10,22 +10,22 @@ reference_dir = 'baseline'
 
 @pytest.mark.array_compare(reference_dir=reference_dir)
 def test_succeeds_func_default():
-    return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return np.arange(3 * 5).reshape((3, 5))
 
 
 @pytest.mark.array_compare(file_format='text', reference_dir=reference_dir)
 def test_succeeds_func_text():
-    return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return np.arange(3 * 5).reshape((3, 5))
 
 
 @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
 def test_succeeds_func_fits():
-    return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return np.arange(3 * 5).reshape((3, 5))
 
 
 class TestClass(object):
 
-    @pytest.mark.array_compare(reference_dir=reference_dir)
+    @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
     def test_succeeds_class(self):
         return np.arange(2 * 4 * 3).reshape((2, 4, 3))
 
@@ -118,7 +118,7 @@ def test_default_format(file_format):
     assert os.path.exists(os.path.join(gen_dir, 'test_default.' + ('fits' if file_format == 'fits' else 'txt')))
 
 
-@pytest.mark.array_compare(reference_dir=reference_dir, rtol=0.5)
+@pytest.mark.array_compare(reference_dir=reference_dir, rtol=0.5, file_format='fits')
 def test_tolerance():
     return np.ones((3,4)) * 1.6
 
