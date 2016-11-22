@@ -10,22 +10,22 @@ reference_dir = 'baseline'
 
 @pytest.mark.array_compare(reference_dir=reference_dir)
 def test_succeeds_func_default():
-    return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return np.arange(3 * 5).reshape((3, 5))
 
 
 @pytest.mark.array_compare(file_format='text', reference_dir=reference_dir)
 def test_succeeds_func_text():
-    return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return np.arange(3 * 5).reshape((3, 5))
 
 
 @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
 def test_succeeds_func_fits():
-    return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+    return np.arange(3 * 5).reshape((3, 5))
 
 
 class TestClass(object):
 
-    @pytest.mark.array_compare(reference_dir=reference_dir)
+    @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
     def test_succeeds_class(self):
         return np.arange(2 * 4 * 3).reshape((2, 4, 3))
 
@@ -91,7 +91,34 @@ def test_generate(file_format):
     assert os.path.exists(os.path.join(gen_dir, 'test_gen.' + ('fits' if file_format == 'fits' else 'txt')))
 
 
-@pytest.mark.array_compare(reference_dir=reference_dir, rtol=0.5)
+TEST_DEFAULT = """
+import pytest
+import numpy as np
+from astropy.io import fits
+@pytest.mark.array_compare
+def test_default():
+    return np.arange(6 * 5).reshape((6, 5))
+"""
+
+@pytest.mark.parametrize('file_format', ('fits', 'text'))
+def test_default_format(file_format):
+
+    tmpdir = tempfile.mkdtemp()
+
+    test_file = os.path.join(tmpdir, 'test.py')
+    with open(test_file, 'w') as f:
+        f.write(TEST_DEFAULT)
+
+    gen_dir = os.path.join(tmpdir, 'spam', 'egg')
+
+    # If we do generate, the test should succeed and a new file will appear
+    code = subprocess.call('py.test -s --arraydiff-default-format={0}'
+                           ' --arraydiff-generate-path={1} {2}'.format(file_format, gen_dir, test_file), shell=True)
+    assert code == 0
+    assert os.path.exists(os.path.join(gen_dir, 'test_default.' + ('fits' if file_format == 'fits' else 'txt')))
+
+
+@pytest.mark.array_compare(reference_dir=reference_dir, rtol=0.5, file_format='fits')
 def test_tolerance():
     return np.ones((3,4)) * 1.6
 

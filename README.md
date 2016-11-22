@@ -46,7 +46,7 @@ Using
 
 To use, you simply need to mark the function where you want to compare images
 using ``@pytest.mark.array_compare``, and make sure that the function
-returns a plain Numpy array::
+returns a plain Numpy array:
 
     python
     import pytest
@@ -90,6 +90,10 @@ to use for the reference files:
 def test_image():
     ...
 ```
+
+The default file format can also be specified using the
+``--arraydiff-default-format=<format>`` flag when running ``py.test``, and
+``<format>`` should be either ``fits`` or ``text``.
 
 The supported formats at this time are ``text`` and ``fits``, and contributions
 for other formats are welcome. The default format is ``text``.
