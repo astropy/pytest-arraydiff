@@ -1,4 +1,4 @@
-0.1 (unreleased)
+0.1 (2016-11-26)
 ----------------
 
 - Initial version
