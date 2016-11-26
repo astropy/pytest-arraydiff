@@ -1,4 +1,4 @@
-|Travis Build Status| |AppVeyor Build status|
+|Travis Build Status| |AppVeyor Build status| |Coveralls coverage|
 
 About
 -----
@@ -208,3 +208,5 @@ plugin is correctly loaded as part of the test suite.
    :target: https://travis-ci.org/astrofrog/pytest-arraydiff
 .. |AppVeyor Build status| image:: https://ci.appveyor.com/api/projects/status/kwbvm9u79mrq6i0w?svg=true
    :target: https://ci.appveyor.com/project/astrofrog/pytest-arraydiff
+.. |Coveralls coverage| image:: https://coveralls.io/repos/matplotlib/pytest-arraydiff/badge.svg
+   :target: https://coveralls.io/r/matplotlib/pytest-arraydiff
