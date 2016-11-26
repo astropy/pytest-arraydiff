@@ -37,24 +37,34 @@ import shutil
 import tempfile
 import warnings
 
-from six import add_metaclass
+from six import add_metaclass, PY2
 from six.moves.urllib.request import urlopen
 
 import pytest
 import numpy as np
 
 
+if PY2:
+    def abstractstaticmethod(func):
+        return func
+    def abstractclassmethod(func):
+        return func
+else:
+    abstractstaticmethod = abc.abstractstaticmethod
+    abstractclassmethod = abc.abstractclassmethod
+
+
 @add_metaclass(abc.ABCMeta)
 class BaseDiff(object):
 
-    @abc.abstractstaticmethod
+    @abstractstaticmethod
     def read(filename):
         """
         Given a filename, return a data object.
         """
         raise NotImplementedError()
 
-    @abc.abstractstaticmethod
+    @abstractstaticmethod
     def write(filename, data, **kwargs):
         """
         Given a filename and a data object (and optional keyword arguments),
@@ -62,7 +72,7 @@ class BaseDiff(object):
         """
         raise NotImplementedError()
 
-    @abc.abstractclassmethod
+    @abstractclassmethod
     def compare(self, reference_file, test_file, atol=None, rtol=None):
         """
         Given a reference and test filename, compare the data to the specified
