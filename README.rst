@@ -4,20 +4,21 @@ About
 -----
 
 This is a `py.test <http://pytest.org>`__ plugin to facilitate the
-generation and comparison of arrays produced during tests (this is a
+generation and comparison of data arrays produced during tests (this is a
 spin-off from
 `pytest-arraydiff <https://github.com/astrofrog/pytest-arraydiff>`__).
 
-The basic idea is that you can write a test that generates a Numpy
-array. You can then either run the tests in a mode to **generate**
-reference files from the arrays, or you can run the tests in
-**comparison** mode, which will compare the results of the tests to the
-reference ones within some tolerance.
+The basic idea is that you can write a test that generates a Numpy array (or
+other related objects depending on the format). You can then either run the
+tests in a mode to **generate** reference files from the arrays, or you can run
+the tests in **comparison** mode, which will compare the results of the tests to
+the reference ones within some tolerance.
 
 At the moment, the supported file formats for the reference files are:
 
--  The FITS format (requires `astropy <http://www.astropy.org>`__)
 -  A plain text-based format (baed on Numpy ``loadtxt`` output)
+-  The FITS format (requires `astropy <http://www.astropy.org>`__). With this
+   format, tests can return either a Numpy array for a FITS HDU object.
 
 For more information on how to write tests to do this, see the **Using**
 section below.
@@ -66,7 +67,7 @@ function returns a plain Numpy array:
     def test_succeeds():
         return np.arange(3 * 5 * 4).reshape((3, 5, 4))
 
-To generate the reference FITS files, run the tests with the
+To generate the reference data files, run the tests with the
 ``--arraydiff-generate-path`` option with the name of the directory
 where the generated files should be placed:
 
@@ -79,7 +80,7 @@ be interpreted as being relative to where you are running ``py.test``.
 Make sure you manually check the reference images to ensure they are
 correct.
 
-Once you are happy with the generated FITS files, you should move them
+Once you are happy with the generated data files, you should move them
 to a sub-directory called ``reference`` relative to the test files (this
 name is configurable, see below). You can also generate the baseline
 images directly in the right directory.
