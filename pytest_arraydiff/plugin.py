@@ -32,21 +32,78 @@
 from functools import wraps
 
 import os
-import sys
+import abc
 import shutil
 import tempfile
 import warnings
 
+from six import add_metaclass, PY2
+from six.moves.urllib.request import urlopen
+
 import pytest
 import numpy as np
 
-if sys.version_info[0] == 2:
-    from urllib import urlopen
+
+if PY2:
+    def abstractstaticmethod(func):
+        return func
+    def abstractclassmethod(func):
+        return func
 else:
-    from urllib.request import urlopen
+    abstractstaticmethod = abc.abstractstaticmethod
+    abstractclassmethod = abc.abstractclassmethod
 
 
-class FITSDiff(object):
+@add_metaclass(abc.ABCMeta)
+class BaseDiff(object):
+
+    @abstractstaticmethod
+    def read(filename):
+        """
+        Given a filename, return a data object.
+        """
+        raise NotImplementedError()
+
+    @abstractstaticmethod
+    def write(filename, data, **kwargs):
+        """
+        Given a filename and a data object (and optional keyword arguments),
+        write the data to a file.
+        """
+        raise NotImplementedError()
+
+    @abstractclassmethod
+    def compare(self, reference_file, test_file, atol=None, rtol=None):
+        """
+        Given a reference and test filename, compare the data to the specified
+        absolute (``atol``) and relative (``rtol``) tolerances.
+
+        Should return two arguments: a boolean indicating whether the data are
+        identical, and a string giving the full error message if not.
+        """
+        raise NotImplementedError()
+
+
+class SimpleArrayDiff(BaseDiff):
+
+    @classmethod
+    def compare(cls, reference_file, test_file, atol=None, rtol=None):
+
+        array_ref = cls.read(reference_file)
+        array_new = cls.read(test_file)
+
+        try:
+            np.testing.assert_allclose(array_ref, array_new, atol=atol, rtol=rtol)
+        except AssertionError as exc:
+            message = "\n\na: {0}".format(test_file) + '\n'
+            message += "b: {0}".format(reference_file) + '\n'
+            message += exc.args[0]
+            return False, message
+        else:
+            return True, ""
+
+
+class FITSDiff(BaseDiff):
 
     extension = 'fits'
 
@@ -56,12 +113,20 @@ class FITSDiff(object):
         return fits.getdata(filename)
 
     @staticmethod
-    def write(filename, array, **kwargs):
+    def write(filename, data, **kwargs):
         from astropy.io import fits
-        return fits.writeto(filename, array, **kwargs)
+        if isinstance(data, np.ndarray):
+            data = fits.PrimaryHDU(data)
+        return data.writeto(filename, **kwargs)
+
+    @classmethod
+    def compare(cls, reference_file, test_file, atol=None, rtol=None):
+        from astropy.io.fits.diff import FITSDiff
+        diff = FITSDiff(reference_file, test_file, tolerance=rtol)
+        return diff.identical, diff.report()
 
 
-class TextDiff(object):
+class TextDiff(SimpleArrayDiff):
 
     extension = 'txt'
 
@@ -70,10 +135,10 @@ class TextDiff(object):
         return np.loadtxt(filename)
 
     @staticmethod
-    def write(filename, array, **kwargs):
+    def write(filename, data, **kwargs):
         if 'fmt' not in kwargs:
             kwargs['fmt'] = '%g'
-        return np.savetxt(filename, array, **kwargs)
+        return np.savetxt(filename, data, **kwargs)
 
 
 FORMATS = {}
@@ -219,17 +284,12 @@ class ArrayComparison(object):
                 baseline_file = os.path.abspath(os.path.join(result_dir, 'reference-' + filename))
                 shutil.copyfile(baseline_file_ref, baseline_file)
 
-                array_ref = FORMATS[file_format].read(baseline_file)
+                identical, msg = FORMATS[file_format].compare(baseline_file, test_image, atol=atol, rtol=rtol)
 
-                try:
-                    np.testing.assert_allclose(array_ref, array, atol=atol, rtol=rtol)
-                except AssertionError as exc:
-                    message = "\n\na: {0}".format(test_image) + '\n'
-                    message += "b: {0}".format(baseline_file) + '\n'
-                    message += exc.args[0]
-                    raise AssertionError(message)
-
-                shutil.rmtree(result_dir)
+                if identical:
+                    shutil.rmtree(result_dir)
+                else:
+                    raise Exception(msg)
 
             else:
 

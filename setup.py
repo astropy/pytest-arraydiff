@@ -16,9 +16,10 @@ setup(
     name="pytest-arraydiff",
     description='pytest plugin to help with comparing array output from tests',
     long_description=long_description,
-    packages = ['pytest_arraydiff'],
+    packages=['pytest_arraydiff'],
+    install_requires=['numpy', 'six', 'pytest'],
     license='BSD',
     author='Thomas Robitaille',
     author_email='thomas.robitaille@gmail.com',
-    entry_points = {'pytest11': ['pytest_arraydiff = pytest_arraydiff.plugin',]},
-)
+    entry_points={'pytest11': ['pytest_arraydiff = pytest_arraydiff.plugin']},
+    )

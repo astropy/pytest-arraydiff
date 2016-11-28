@@ -23,6 +23,12 @@ def test_succeeds_func_fits():
     return np.arange(3 * 5).reshape((3, 5))
 
 
+@pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
+def test_succeeds_func_fits_hdu():
+    from astropy.io import fits
+    return fits.PrimaryHDU(np.arange(3 * 5).reshape((3, 5)))
+
+
 class TestClass(object):
 
     @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
