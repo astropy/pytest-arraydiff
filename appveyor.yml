@@ -11,9 +11,8 @@ environment:
 
   matrix:
       - PYTHON_VERSION: "2.7"
-      - PYTHON_VERSION: "3.3"
-      - PYTHON_VERSION: "3.4"
       - PYTHON_VERSION: "3.5"
+      - PYTHON_VERSION: "3.6"
 
 platform:
     -x64
@@ -28,5 +27,4 @@ install:
 build: false
 
 test_script:
-  - "%CMD_IN_ENV% cd tests"
-  - "%CMD_IN_ENV% py.test --arraydiff"
+  - "%CMD_IN_ENV% py.test tests --arraydiff"
