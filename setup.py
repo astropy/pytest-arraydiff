@@ -12,7 +12,7 @@ with open('README.rst') as infile:
 
 setup(
     version=__version__,
-    url="https://github.com/astrofrog/pytest-fits",
+    url="https://github.com/astrofrog/pytest-arraydiff",
     name="pytest-arraydiff",
     description='pytest plugin to help with comparing array output from tests',
     long_description=long_description,
@@ -22,4 +22,15 @@ setup(
     author='Thomas Robitaille',
     author_email='thomas.robitaille@gmail.com',
     entry_points={'pytest11': ['pytest_arraydiff = pytest_arraydiff.plugin']},
-    )
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Framework :: Pytest',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Testing',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+        'Operating System :: OS Independent',
+        'License :: OSI Approved :: BSD License',
+    ],
+)
