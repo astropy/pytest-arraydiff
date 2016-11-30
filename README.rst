@@ -54,7 +54,7 @@ Using
 -----
 
 To use, you simply need to mark the function where you want to compare
-images using ``@pytest.mark.array_compare``, and make sure that the
+arrays using ``@pytest.mark.array_compare``, and make sure that the
 function returns a plain Numpy array:
 
 ::
@@ -77,13 +77,13 @@ where the generated files should be placed:
 
 If the directory does not exist, it will be created. The directory will
 be interpreted as being relative to where you are running ``py.test``.
-Make sure you manually check the reference images to ensure they are
+Make sure you manually check the reference arrays to ensure they are
 correct.
 
 Once you are happy with the generated data files, you should move them
 to a sub-directory called ``reference`` relative to the test files (this
 name is configurable, see below). You can also generate the baseline
-images directly in the right directory.
+arrays directly in the right directory.
 
 You can then run the tests simply with:
 
@@ -91,9 +91,9 @@ You can then run the tests simply with:
 
     py.test --arraydiff
 
-and the tests will pass if the images are the same. If you omit the
+and the tests will pass if the arrays are the same. If you omit the
 ``--arraydiff`` option, the tests will run but will only check that the
-code runs without checking the output images.
+code runs without checking the output arrays.
 
 Options
 -------
@@ -104,7 +104,7 @@ the format to use for the reference files:
 .. code:: python
 
     @pytest.mark.array_compare(file_format='text')
-    def test_image():
+    def test_array():
         ...
 
 The default file format can also be specified using the
@@ -121,7 +121,7 @@ Another argument is the relative tolerance for floating point values
 .. code:: python
 
     @pytest.mark.array_compare(rtol=20)
-    def test_image():
+    def test_array():
         ...
 
 You can also pass keyword arguments to the writers using the
@@ -132,7 +132,7 @@ You can also pass keyword arguments to the writers using the
 .. code:: python
 
     @pytest.mark.array_compare(file_format='fits', write_kwargs={'output_verify': 'silentfix'})
-    def test_image():
+    def test_array():
         ...
 
 Other options include the name of the reference directory (which
@@ -142,9 +142,9 @@ extension).
 
 .. code:: python
 
-    @pytest.mark.array_compare(reference_dir='baseline_images',
+    @pytest.mark.array_compare(reference_dir='baseline_arrays',
                                    filename='other_name.fits')
-    def test_image():
+    def test_array():
         ...
 
 The reference directory in the decorator above will be interpreted as
@@ -157,7 +157,7 @@ running tests by running ``py.test`` with:
 
 ::
 
-    py.test --arraydiff --arraydiff-reference-path=baseline_images
+    py.test --arraydiff --arraydiff-reference-path=baseline_arrays
 
 This directory will be interpreted as being relative to where the tests
 are run. In addition, if both this option and the ``reference_dir``
@@ -167,7 +167,7 @@ decorator takes precedence.
 Test failure example
 --------------------
 
-If the images produced by the tests are correct, then the test will
+If the arrays produced by the tests are correct, then the test will
 pass, but if they are not, the test will fail with a message similar to
 the following:
 

@@ -262,11 +262,11 @@ class ArrayComparison(object):
 
                 # Save the figure
                 result_dir = tempfile.mkdtemp()
-                test_image = os.path.abspath(os.path.join(result_dir, filename))
+                test_array = os.path.abspath(os.path.join(result_dir, filename))
 
-                FORMATS[file_format].write(test_image, array, **write_kwargs)
+                FORMATS[file_format].write(test_array, array, **write_kwargs)
 
-                # Find path to baseline image
+                # Find path to baseline array
                 if baseline_remote:
                     baseline_file_ref = _download_file(reference_dir + filename)
                 else:
@@ -277,14 +277,14 @@ class ArrayComparison(object):
                                     Generated file:
                                     \t{test}
                                     This is expected for new tests.""".format(
-                        test=test_image))
+                        test=test_array))
 
-                # distutils may put the baseline images in non-accessible places,
+                # distutils may put the baseline arrays in non-accessible places,
                 # copy to our tmpdir to be sure to keep them in case of failure
                 baseline_file = os.path.abspath(os.path.join(result_dir, 'reference-' + filename))
                 shutil.copyfile(baseline_file_ref, baseline_file)
 
-                identical, msg = FORMATS[file_format].compare(baseline_file, test_image, atol=atol, rtol=rtol)
+                identical, msg = FORMATS[file_format].compare(baseline_file, test_array, atol=atol, rtol=rtol)
 
                 if identical:
                     shutil.rmtree(result_dir)
