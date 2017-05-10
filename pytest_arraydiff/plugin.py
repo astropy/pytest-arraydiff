@@ -122,7 +122,7 @@ class FITSDiff(BaseDiff):
     @classmethod
     def compare(cls, reference_file, test_file, atol=None, rtol=None):
         from astropy.io.fits.diff import FITSDiff
-        diff = FITSDiff(reference_file, test_file, tolerance=rtol)
+        diff = FITSDiff(reference_file, test_file, rtol=rtol)
         return diff.identical, diff.report()
 
 
