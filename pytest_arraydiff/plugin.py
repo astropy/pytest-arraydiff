@@ -37,14 +37,14 @@ import shutil
 import tempfile
 import warnings
 
-from six import add_metaclass, PY2
+import six
 from six.moves.urllib.request import urlopen
 
 import pytest
 import numpy as np
 
 
-if PY2:
+if six.PY2:
     def abstractstaticmethod(func):
         return func
     def abstractclassmethod(func):
@@ -54,7 +54,7 @@ else:
     abstractclassmethod = abc.abstractclassmethod
 
 
-@add_metaclass(abc.ABCMeta)
+@six.add_metaclass(abc.ABCMeta)
 class BaseDiff(object):
 
     @abstractstaticmethod
@@ -141,8 +141,15 @@ class TextDiff(SimpleArrayDiff):
 
     @staticmethod
     def write(filename, data, **kwargs):
-        if 'fmt' not in kwargs:
-            kwargs['fmt'] = '%g'
+        fmt = kwargs.get('fmt', '%g')
+        # Workaround for a known issue in `numpy.savetxt` for the `fmt` argument:
+        # https://github.com/numpy/numpy/pull/4053#issuecomment-263808221
+        # Convert `unicode` to `str` (i.e. bytes) on Python 2
+        if six.PY2 and isinstance(fmt, six.text_type):
+            fmt = fmt.encode('ascii')
+
+        kwargs['fmt'] = fmt
+
         return np.savetxt(filename, data, **kwargs)
 
 
