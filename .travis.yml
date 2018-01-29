@@ -22,6 +22,7 @@ script:
    - python -c 'import pytest_arraydiff.plugin'
    - pytest -vv --arraydiff --cov pytest_arraydiff tests
    - pytest -vv --cov pytest_arraydiff --cov-append tests
+   - python setup.py check --restructuredtext
 
 after_success:
    - coveralls
