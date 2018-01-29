@@ -1,9 +1,12 @@
 import os
+import sys
 import subprocess
 import tempfile
 
 import pytest
 import numpy as np
+
+PY2 = sys.version_info[0] == 2
 
 reference_dir = 'baseline'
 
@@ -20,20 +23,20 @@ def test_succeeds_func_text():
 
 @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
 def test_succeeds_func_fits():
-    return np.arange(3 * 5).reshape((3, 5))
+    return np.arange(3 * 5).reshape((3, 5)).astype(np.int64)
 
 
 @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
 def test_succeeds_func_fits_hdu():
     from astropy.io import fits
-    return fits.PrimaryHDU(np.arange(3 * 5).reshape((3, 5)))
+    return fits.PrimaryHDU(np.arange(3 * 5).reshape((3, 5)).astype(np.int64))
 
 
 class TestClass(object):
 
     @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
     def test_succeeds_class(self):
-        return np.arange(2 * 4 * 3).reshape((2, 4, 3))
+        return np.arange(2 * 4 * 3).reshape((2, 4, 3)).astype(np.int64)
 
 
 TEST_FAILING = """
@@ -85,14 +88,20 @@ def test_generate(file_format):
     gen_dir = os.path.join(tmpdir, 'spam', 'egg')
 
     # If we don't generate, the test will fail
-    p = subprocess.Popen('py.test --arraydiff {0}'.format(test_file), shell=True,
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    p.wait()
-    output = p.stdout.read()
-    assert b'File not found for comparison test' in output
+    try:
+        if PY2:
+            subprocess.check_output(['pytest', '--arraydiff', test_file])
+        else:
+            subprocess.check_output(['pytest', '--arraydiff', test_file], timeout=10)
+    except subprocess.CalledProcessError as grepexc:
+        assert b'File not found for comparison test' in grepexc.output
 
     # If we do generate, the test should succeed and a new file will appear
-    code = subprocess.call('py.test --arraydiff-generate-path={0} {1}'.format(gen_dir, test_file), shell=True)
+    if PY2:
+        code = subprocess.call(['pytest', '--arraydiff-generate-path={0}'.format(gen_dir), test_file])
+    else:
+        code = subprocess.call(['pytest', '--arraydiff-generate-path={0}'.format(gen_dir), test_file],
+                               timeout=10)
     assert code == 0
     assert os.path.exists(os.path.join(gen_dir, 'test_gen.' + ('fits' if file_format == 'fits' else 'txt')))
 
