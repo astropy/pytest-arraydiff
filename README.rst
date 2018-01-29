@@ -207,7 +207,7 @@ plugin is correctly loaded as part of the test suite.
 
 .. |Travis Build Status| image:: https://travis-ci.org/astrofrog/pytest-arraydiff.svg?branch=master
    :target: https://travis-ci.org/astrofrog/pytest-arraydiff
-.. |AppVeyor Build status| image:: https://ci.appveyor.com/api/projects/status/kwbvm9u79mrq6i0w?svg=true
+.. |AppVeyor Build status| image:: https://ci.appveyor.com/api/projects/status/4hfoe954rxhgslsl/branch/master?svg=true
    :target: https://ci.appveyor.com/project/astrofrog/pytest-arraydiff
 .. |Coveralls coverage| image:: https://coveralls.io/repos/matplotlib/pytest-arraydiff/badge.svg
    :target: https://coveralls.io/r/matplotlib/pytest-arraydiff
