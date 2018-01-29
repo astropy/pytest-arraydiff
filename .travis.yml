@@ -4,7 +4,8 @@ sudo: false
 
 env:
   global:
-    - CONDA_DEPENDENCIES="pytest numpy astropy"
+    - CONDA_DEPENDENCIES="pytest pytest-cov numpy astropy"
+    - PIP_DEPENDENCIES="coveralls"
   matrix:
     - PYTHON_VERSION=2.7
     - PYTHON_VERSION=3.5
