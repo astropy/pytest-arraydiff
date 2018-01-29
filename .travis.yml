@@ -16,6 +16,9 @@ install:
     - python setup.py install
 
 script:
-   - python setup.py check --restructuredtext
-   - cd tests
-   - py.test --arraydiff
+   - python -c 'import pytest_arraydiff.plugin'
+   - pytest -vv --arraydiff --cov pytest_arraydiff tests
+   - pytest -vv --cov pytest_arraydiff --cov-append tests
+
+after_success:
+   - coveralls
