@@ -26,7 +26,7 @@ section below.
 Installing
 ----------
 
-This plugin is compatible with Python 2.7, and 3.3 and later, and
+This plugin is compatible with Python 2.7, and 3.5 and later, and
 requires `pytest <http://pytest.org>`__ and
 `numpy <http://www.numpy.org>`__ to be installed.
 
