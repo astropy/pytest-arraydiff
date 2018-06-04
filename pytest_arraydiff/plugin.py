@@ -212,7 +212,7 @@ class ArrayComparison(object):
 
     def pytest_runtest_setup(self, item):
 
-        compare = item.keywords.get('array_compare')
+        compare = item.get_closest_marker('array_compare')
 
         if compare is None:
             return
