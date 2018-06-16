@@ -4,9 +4,9 @@ About
 -----
 
 This is a `py.test <http://pytest.org>`__ plugin to facilitate the
-generation and comparison of data arrays produced during tests (this is a
-spin-off from
-`pytest-arraydiff <https://github.com/astrofrog/pytest-arraydiff>`__).
+generation and comparison of data arrays produced during tests, in particular
+in cases where the arrays are too large to conveniently hard-code them
+in the tests (e.g. ``np.testing.assert_allclose(x, [1, 2, 3])``).
 
 The basic idea is that you can write a test that generates a Numpy array (or
 other related objects depending on the format). You can then either run the
