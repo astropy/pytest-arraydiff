@@ -22,6 +22,7 @@ setup(
     author='Thomas Robitaille',
     author_email='thomas.robitaille@gmail.com',
     entry_points={'pytest11': ['pytest_arraydiff = pytest_arraydiff.plugin']},
+    zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Pytest',
