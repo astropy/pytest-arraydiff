@@ -16,7 +16,7 @@ the reference ones within some tolerance.
 
 At the moment, the supported file formats for the reference files are:
 
--  A plain text-based format (baed on Numpy ``loadtxt`` output)
+-  A plain text-based format (based on Numpy ``loadtxt`` output)
 -  The FITS format (requires `astropy <http://www.astropy.org>`__). With this
    format, tests can return either a Numpy array for a FITS HDU object.
 
