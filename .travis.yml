@@ -5,7 +5,7 @@ sudo: false
 env:
   global:
     - CONDA_DEPENDENCIES="pytest pytest-cov numpy astropy"
-    - PIP_DEPENDENCIES="coveralls"
+    - PIP_DEPENDENCIES="codecov"
   matrix:
     - PYTHON_VERSION=2.7
     - PYTHON_VERSION=3.5
@@ -25,4 +25,4 @@ script:
    - python setup.py check --restructuredtext
 
 after_success:
-   - coveralls
+   - codecov
