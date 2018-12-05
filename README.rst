@@ -1,4 +1,4 @@
-|Travis Build Status| |AppVeyor Build status| |Coveralls coverage|
+|Travis Build Status| |AppVeyor Build status| |Coverage|
 
 About
 -----
@@ -30,21 +30,15 @@ This plugin is compatible with Python 2.7, and 3.5 and later, and
 requires `pytest <http://pytest.org>`__ and
 `numpy <http://www.numpy.org>`__ to be installed.
 
-To install, you can do:
-
-::
+To install, you can do::
 
     pip install pytest-arraydiff
 
-You can check that the plugin is registered with pytest by doing:
-
-::
+You can check that the plugin is registered with pytest by doing::
 
     py.test --version
 
-which will show a list of plugins:
-
-::
+which will show a list of plugins::
 
     This is pytest version 2.7.1, imported from ...
     setuptools registered plugins:
@@ -55,9 +49,7 @@ Using
 
 To use, you simply need to mark the function where you want to compare
 arrays using ``@pytest.mark.array_compare``, and make sure that the
-function returns a plain Numpy array:
-
-::
+function returns a plain Numpy array::
 
     python
     import pytest
@@ -69,9 +61,7 @@ function returns a plain Numpy array:
 
 To generate the reference data files, run the tests with the
 ``--arraydiff-generate-path`` option with the name of the directory
-where the generated files should be placed:
-
-::
+where the generated files should be placed::
 
     py.test --arraydiff-generate-path=reference
 
@@ -85,9 +75,7 @@ to a sub-directory called ``reference`` relative to the test files (this
 name is configurable, see below). You can also generate the baseline
 arrays directly in the right directory.
 
-You can then run the tests simply with:
-
-::
+You can then run the tests simply with::
 
     py.test --arraydiff
 
@@ -153,9 +141,7 @@ also be a URL (which should start with ``http://`` or ``https://`` and
 end in a slash).
 
 Finally, you can also set a custom baseline directory globally when
-running tests by running ``py.test`` with:
-
-::
+running tests by running ``py.test`` with::
 
     py.test --arraydiff --arraydiff-reference-path=baseline_arrays
 
@@ -169,9 +155,7 @@ Test failure example
 
 If the arrays produced by the tests are correct, then the test will
 pass, but if they are not, the test will fail with a message similar to
-the following:
-
-::
+the following::
 
     E               AssertionError:
     E
@@ -195,9 +179,7 @@ Running the tests for pytest-arraydiff
 --------------------------------------
 
 If you are contributing some changes and want to run the tests, first
-install the latest version of the plugin then do:
-
-::
+install the latest version of the plugin then do::
 
     cd tests
     py.test --arraydiff
@@ -207,7 +189,7 @@ plugin is correctly loaded as part of the test suite.
 
 .. |Travis Build Status| image:: https://travis-ci.org/astrofrog/pytest-arraydiff.svg?branch=master
    :target: https://travis-ci.org/astrofrog/pytest-arraydiff
-.. |AppVeyor Build status| image:: https://ci.appveyor.com/api/projects/status/4hfoe954rxhgslsl/branch/master?svg=true
-   :target: https://ci.appveyor.com/project/astrofrog/pytest-arraydiff
-.. |Coveralls coverage| image:: https://coveralls.io/repos/matplotlib/pytest-arraydiff/badge.svg
-   :target: https://coveralls.io/r/matplotlib/pytest-arraydiff
+.. |AppVeyor Build status| image:: https://ci.appveyor.com/api/projects/status/0nech6qgp8jlabjp/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/astropy/pytest-arraydiff
+.. |Coverage| image:: https://codecov.io/gh/astropy/pytest-arraydiff/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/astropy/pytest-arraydiff
