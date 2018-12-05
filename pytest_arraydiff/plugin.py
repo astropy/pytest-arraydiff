@@ -217,7 +217,6 @@ class ArrayComparison(object):
             compare = item.get_marker('array_compare')
         else:
             compare = item.get_closest_marker('array_compare')
-        
 
         if compare is None:
             return

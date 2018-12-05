@@ -8,6 +8,7 @@ environment:
                         # of 32 bit and 64 bit builds are needed, move this
                         # to the matrix section.
       CONDA_DEPENDENCIES: "pytest numpy astropy"
+      PIP_DEPENDENCIES: "codecov"
 
   matrix:
       - PYTHON_VERSION: "2.7"
@@ -28,3 +29,4 @@ build: false
 
 test_script:
   - "%CMD_IN_ENV% py.test tests --arraydiff"
+  - "%CMD_IN_ENV% codecov"
