@@ -2,6 +2,13 @@ language: c
 
 sudo: false
 
+notifications:
+  slack:
+    on_success: never
+    on_failure: always
+    secure: "TGQd3tbCDD4yz71iDgcwydUCJERx9MGOAHOtVc6SLMANHXmrXl1vIdAChr4P/1LPqLawjUC/9mqBZTImQj/Pg5PaIVnz7K0PN/fTVHqCWERZoeW5KheQ6Wg89a9B54aDTGzvNuRH83l3jQBYfa9ZuCv5mpeVOIzPcBFUrD+9DqA93DJc1NIfwlyJStyXS7aVHhDsD318GZtxY5ZL1pA0GWfde68vc5/Ng6QLqqTeogEZ0reVsXDAijjnOAQsnzYBsZH86vS3JldihAfMygY2rr9jURfpx0EQivCBeJsKtm9IVEh4Iy54TzxyS87KRW1DGjPrIIDzdq2BXfKF+zTiy9QUHzwijJCE4EusCHjaITEis9lq77g9pQMDXCCBhKsgs69lYSSxmhD8VahH0Ex5Pj5aLy3X71yIAA95Xb8q0YPPsjVHF4R2F91S4QMPxyfddym7JiBvNWOPZ2Jye+an+H5hgRZvaSClUUjIT7MDX3UkhzvMrAD4n7Yl64wcPdmj4GJD04aOq55pCfEw088GDL64HAYYnCpEK+hkeKSpzYFjJEwPgC5dLY7RNUwm0tuyRcnLwoRMYLVMT7TWoSfgPosv7kciIkS5c6lmqPRV11AcJARPP6+XIUJ333rkqdLQy59VtiBASQRSxsZKqewEaYv5u+8g+y2vmMLQKkFPW60="
+    if: type = cron
+    
 env:
   global:
     - CONDA_DEPENDENCIES="pytest pytest-cov numpy astropy"
