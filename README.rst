@@ -15,7 +15,8 @@ in cases where the arrays are too large to conveniently hard-code them
 in the tests (e.g. ``np.testing.assert_allclose(x, [1, 2, 3])``).
 
 The basic idea is that you can write a test that generates a Numpy array (or
-other related objects depending on the format). You can then either run the
+other related objects depending on the format, e.g. pandas DataFrame).
+You can then either run the
 tests in a mode to **generate** reference files from the arrays, or you can run
 the tests in **comparison** mode, which will compare the results of the tests to
 the reference ones within some tolerance.
@@ -25,6 +26,7 @@ At the moment, the supported file formats for the reference files are:
 -  A plain text-based format (based on Numpy ``loadtxt`` output)
 -  The FITS format (requires `astropy <http://www.astropy.org>`__). With this
    format, tests can return either a Numpy array for a FITS HDU object.
+-  A pandas HDF5 format using the pandas HDFStore
 
 For more information on how to write tests to do this, see the **Using**
 section below.

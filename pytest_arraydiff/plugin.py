@@ -155,10 +155,12 @@ class PDHDFDiff(BaseDiff):
     @classmethod
     def compare(cls, reference_file, test_file, atol=None, rtol=None):
         import pandas.testing as pdt
+        import pandas as pd
 
-
+        ref_data = pd.read_hdf(reference_file)
+        test_data = pd.read_hdf(test_file)
         try:
-            pdt.assert_frame_equal(reference_file, test_file)
+            pdt.assert_frame_equal(ref_data, test_data)
         except AssertionError as exc:
             message = "\n\na: {0}".format(test_file) + '\n'
             message += "b: {0}".format(reference_file) + '\n'
