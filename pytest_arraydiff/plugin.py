@@ -173,7 +173,7 @@ class PDHDFDiff(BaseDiff):
 FORMATS = {}
 FORMATS['fits'] = FITSDiff
 FORMATS['text'] = TextDiff
-FORMATS['pdhdf'] = PDHDFDiff
+FORMATS['pd_hdf'] = PDHDFDiff
 
 
 def _download_file(url):

@@ -17,7 +17,7 @@ def test_succeeds_func_default():
 def test_succeeds_func_text():
     return np.arange(3 * 5).reshape((3, 5))
 
-@pytest.mark.array_compare(file_format='pdhdf', reference_dir=reference_dir)
+@pytest.mark.array_compare(file_format='pd_hdf', reference_dir=reference_dir)
 def test_succeeds_func_pdhdf():
     import pandas as pd
     return pd.DataFrame(data=np.arange(20), columns=['test_data'])
