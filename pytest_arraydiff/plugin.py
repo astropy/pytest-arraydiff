@@ -36,7 +36,6 @@ import abc
 import shutil
 import tempfile
 import warnings
-from distutils.version import StrictVersion
 
 import six
 from six.moves.urllib.request import urlopen
@@ -213,10 +212,7 @@ class ArrayComparison(object):
 
     def pytest_runtest_setup(self, item):
 
-        if StrictVersion(pytest.__version__) < StrictVersion("3.6"):
-            compare = item.get_marker('array_compare')
-        else:
-            compare = item.get_closest_marker('array_compare')
+        compare = item.get_closest_marker('array_compare')
 
         if compare is None:
             return
