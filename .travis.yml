@@ -1,0 +1,75 @@
+# We set the language to c because python isn't supported on the MacOS X nodes
+# on Travis. However, the language ends up being irrelevant anyway, since we
+# install Python ourselves using conda.
+language: c
+
+os:
+    - linux
+
+# Use Travis' container-based architecture
+sudo: false
+
+notifications:
+  slack:
+    on_success: never
+    on_failure: always
+    secure: "TGQd3tbCDD4yz71iDgcwydUCJERx9MGOAHOtVc6SLMANHXmrXl1vIdAChr4P/1LPqLawjUC/9mqBZTImQj/Pg5PaIVnz7K0PN/fTVHqCWERZoeW5KheQ6Wg89a9B54aDTGzvNuRH83l3jQBYfa9ZuCv5mpeVOIzPcBFUrD+9DqA93DJc1NIfwlyJStyXS7aVHhDsD318GZtxY5ZL1pA0GWfde68vc5/Ng6QLqqTeogEZ0reVsXDAijjnOAQsnzYBsZH86vS3JldihAfMygY2rr9jURfpx0EQivCBeJsKtm9IVEh4Iy54TzxyS87KRW1DGjPrIIDzdq2BXfKF+zTiy9QUHzwijJCE4EusCHjaITEis9lq77g9pQMDXCCBhKsgs69lYSSxmhD8VahH0Ex5Pj5aLy3X71yIAA95Xb8q0YPPsjVHF4R2F91S4QMPxyfddym7JiBvNWOPZ2Jye+an+H5hgRZvaSClUUjIT7MDX3UkhzvMrAD4n7Yl64wcPdmj4GJD04aOq55pCfEw088GDL64HAYYnCpEK+hkeKSpzYFjJEwPgC5dLY7RNUwm0tuyRcnLwoRMYLVMT7TWoSfgPosv7kciIkS5c6lmqPRV11AcJARPP6+XIUJ333rkqdLQy59VtiBASQRSxsZKqewEaYv5u+8g+y2vmMLQKkFPW60="
+    if: type = cron
+    
+env:
+    global:
+        # The following versions are the 'default' for tests, unless
+        # overidden underneath. They are defined here in order to save having
+        # to repeat them for all configurations.
+        - TOXENV='test'
+        - TOXARGS='-v'
+        - TOXPOSARGS=''
+        - CONDA_DEPENDENCIES="pandas pytables"
+
+matrix:
+    include:
+
+        - language: python
+          python: 3.6
+          name: Python 3.6 and pytest 4.6 (Linux)
+          env: TOXENV=py36-test-pytest46
+
+        - os: windows
+          name: Python 3.6 and pytest 5.0 (Windows)
+          env: PYTHON_VERSION=3.6
+               TOXENV=py36-test-pytest50
+
+        - os: osx
+          name: Python 3.7 and pytest 5.1 (MacOS X)
+          env: PYTHON_VERSION=3.7
+               TOXENV=py37-test-pytest51
+
+        - language: python
+          python: 3.7
+          name: Python 3.7 and pytest 5.2 (Linux)
+          env: TOXENV=py37-test-pytest52
+
+        - os: windows
+          name: Python 3.8 and pytest 5.3 (Windows)
+          env: PYTHON_VERSION=3.8
+               TOXENV=py38-test-pytest53
+
+        - language: python
+          python: 3.8
+          name: Python 3.8 and pytest 6.0 (Linux)
+          env: TOXENV=py38-test-pytest60
+
+        - os: osx
+          name: Python 3.8 and pytest dev (MacOS X)
+          env: PYTHON_VERSION=3.8
+               TOXENV=py38-test-pytestdev
+
+install:
+    - if [[ $TRAVIS_OS_NAME == osx || $TRAVIS_OS_NAME == windows ]]; then
+        git clone git://github.com/astropy/ci-helpers.git;
+        source ci-helpers/travis/setup_python.sh;
+      fi
+
+script:
+    - pip install tox
+    - tox $TOXARGS -- $TOXPOSARGS
