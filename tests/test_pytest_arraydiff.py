@@ -19,7 +19,7 @@ def test_succeeds_func_text():
 
 @pytest.mark.array_compare(file_format='pd_hdf', reference_dir=reference_dir)
 def test_succeeds_func_pdhdf():
-    import pandas as pd
+    pd = pytest.importorskip('pandas')
     return pd.DataFrame(data=np.arange(20), columns=['test_data'])
 
 @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
