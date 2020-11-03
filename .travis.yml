@@ -24,7 +24,6 @@ env:
         - TOXENV='test'
         - TOXARGS='-v'
         - TOXPOSARGS=''
-        - CONDA_DEPENDENCIES="pandas pytables"
 
 matrix:
     include:
