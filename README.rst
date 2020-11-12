@@ -1,4 +1,6 @@
-|Travis Build Status| |AppVeyor Build status| |Coverage|
+.. image:: https://github.com/astropy/pytest-arraydiff/workflows/CI/badge.svg
+    :target: https://github.com/astropy/pytest-arraydiff/actions
+    :alt: CI Status
 
 About
 -----
@@ -186,10 +188,3 @@ install the latest version of the plugin then do::
 
 The reason for having to install the plugin first is to ensure that the
 plugin is correctly loaded as part of the test suite.
-
-.. |Travis Build Status| image:: https://travis-ci.org/astrofrog/pytest-arraydiff.svg?branch=master
-   :target: https://travis-ci.org/astrofrog/pytest-arraydiff
-.. |AppVeyor Build status| image:: https://ci.appveyor.com/api/projects/status/0nech6qgp8jlabjp/branch/master?svg=true
-   :target: https://ci.appveyor.com/project/astropy/pytest-arraydiff
-.. |Coverage| image:: https://codecov.io/gh/astropy/pytest-arraydiff/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/astropy/pytest-arraydiff
