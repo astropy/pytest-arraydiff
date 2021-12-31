@@ -275,7 +275,7 @@ class ArrayComparison(object):
                                     This is expected for new tests.""".format(
                         test=test_array))
 
-                # distutils may put the baseline arrays in non-accessible places,
+                # setuptools may put the baseline arrays in non-accessible places,
                 # copy to our tmpdir to be sure to keep them in case of failure
                 baseline_file = os.path.abspath(os.path.join(result_dir, 'reference-' + filename))
                 shutil.copyfile(baseline_file_ref, baseline_file)
