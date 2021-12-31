@@ -1,4 +1,4 @@
-0.4 (unreleased)
+0.4 (2021-12-31)
 ----------------
 
 - Minimum Python version is now 3.7. [#30]
