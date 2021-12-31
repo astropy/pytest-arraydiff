@@ -1,3 +1,7 @@
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.5811772.svg
+   :target: https://doi.org/10.5281/zenodo.5811772
+   :alt: 10.5281/zenodo.5811772
+
 .. image:: https://github.com/astropy/pytest-arraydiff/workflows/CI/badge.svg
     :target: https://github.com/astropy/pytest-arraydiff/actions
     :alt: CI Status
