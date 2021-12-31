@@ -1,7 +1,7 @@
 0.4 (unreleased)
 ----------------
 
-- No changes yet.
+- Various infrastructure updates.
 
 0.3 (2018-12-05)
 ----------------
