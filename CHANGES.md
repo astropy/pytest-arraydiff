@@ -1,5 +1,9 @@
-0.5 (unreleased)
+0.5 (2022-01-12)
 ----------------
+
+- Removed `astropy` as required dependency. [#31]
+
+- Formally register `array_compare` as marker.
 
 0.4 (2021-12-31)
 ----------------
