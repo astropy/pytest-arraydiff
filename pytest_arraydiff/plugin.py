@@ -164,7 +164,9 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-
+    config.getini('markers').append(
+        'array_compare: for functions using array comparison')
+    
     if config.getoption("--arraydiff") or config.getoption("--arraydiff-generate-path") is not None:
 
         reference_dir = config.getoption("--arraydiff-reference-path")
