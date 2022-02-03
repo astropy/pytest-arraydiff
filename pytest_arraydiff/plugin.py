@@ -137,9 +137,43 @@ class TextDiff(SimpleArrayDiff):
         return np.savetxt(filename, data, **kwargs)
 
 
+class PDHDFDiff(BaseDiff):
+
+    extension = 'h5'
+
+    @staticmethod
+    def read(filename):
+        import pandas as pd
+        return pd.read_hdf(filename)
+
+    @staticmethod
+    def write(filename, data, **kwargs):
+        import pandas as pd
+        key = os.path.basename(filename).replace('.h5', '')
+        return data.to_hdf(filename, key, **kwargs)
+
+    @classmethod
+    def compare(cls, reference_file, test_file, atol=None, rtol=None):
+        import pandas.testing as pdt
+        import pandas as pd
+
+        ref_data = pd.read_hdf(reference_file)
+        test_data = pd.read_hdf(test_file)
+        try:
+            pdt.assert_frame_equal(ref_data, test_data)
+        except AssertionError as exc:
+            message = "\n\na: {0}".format(test_file) + '\n'
+            message += "b: {0}".format(reference_file) + '\n'
+            message += exc.args[0]
+            return False, message
+        else:
+            return True, ""
+
+
 FORMATS = {}
 FORMATS['fits'] = FITSDiff
 FORMATS['text'] = TextDiff
+FORMATS['pd_hdf'] = PDHDFDiff
 
 
 def _download_file(url):

@@ -1,6 +1,8 @@
 0.6 (unreleased)
 ----------------
 
+- Add ability to compare to Pandas DataFrames and store them as HDF5 files [#23]
+
 0.5 (2022-01-12)
 ----------------
 
