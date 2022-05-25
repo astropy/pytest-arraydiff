@@ -116,8 +116,9 @@ class FITSDiff(BaseDiff):
         from astropy.io.fits.diff import FITSDiff
         from astropy.utils.introspection import minversion
         if minversion(astropy, '2.0'):
-            diff = FITSDiff(reference_file, test_file, rtol=rtol)
+            diff = FITSDiff(reference_file, test_file, rtol=rtol, atol=atol)
         else:
+            # `atol` is not supported prior to Astropy 2.0
             diff = FITSDiff(reference_file, test_file, tolerance=rtol)
         return diff.identical, diff.report()
 
