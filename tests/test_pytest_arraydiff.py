@@ -132,9 +132,20 @@ def test_default_format(file_format):
     assert os.path.exists(os.path.join(gen_dir, 'test_default.' + ('fits' if file_format == 'fits' else 'txt')))
 
 
-@pytest.mark.array_compare(reference_dir=reference_dir, rtol=0.5, file_format='fits')
-def test_tolerance():
-    return np.ones((3, 4)) * 1.6
+@pytest.mark.array_compare(reference_dir=reference_dir, rtol=0.5,
+        file_format='fits')
+def test_relative_tolerance():
+    # Scale up the output values by 1.5 to ensure the large `rtol` value is
+    # needed. (The comparison file contains all 1.6.)
+    return np.ones((3, 4)) * 1.6 * 1.5
+
+
+@pytest.mark.array_compare(reference_dir=reference_dir, atol=1.5,
+        file_format='fits')
+def test_absolute_tolerance():
+    # Increase the output values by 1.4 to ensure the large `atol` value is
+    # needed. (The comparison file contains all 1.6.)
+    return np.ones((3, 4)) * 1.6 + 1.4
 
 
 def test_nofile():

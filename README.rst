@@ -111,12 +111,12 @@ The supported formats at this time are ``text`` and ``fits``, and
 contributions for other formats are welcome. The default format is
 ``text``.
 
-Another argument is the relative tolerance for floating point values
-(which defaults to 1e-7):
+Additional arguments are the relative and absolute tolerances for floating
+point values (which default to 1e-7 and 0, respectively):
 
 .. code:: python
 
-    @pytest.mark.array_compare(rtol=20)
+    @pytest.mark.array_compare(rtol=20, atol=0.1)
     def test_array():
         ...
 

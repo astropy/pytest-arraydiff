@@ -3,6 +3,9 @@
 
 - Add ability to compare to Pandas DataFrames and store them as HDF5 files [#23]
 
+- Fix ``array_compare`` so that the ``atol`` parameter is correctly used with
+  FITS files. [#33]
+
 0.5 (2022-01-12)
 ----------------
 
