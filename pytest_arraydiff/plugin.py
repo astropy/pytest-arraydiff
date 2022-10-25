@@ -221,6 +221,8 @@ def pytest_configure(config):
                                                       reference_dir=reference_dir,
                                                       generate_dir=generate_dir,
                                                       default_format=default_format))
+    else:
+        config.pluginmanager.register(ArrayInterceptor(config))
 
 
 def generate_test_name(item):
@@ -359,3 +361,23 @@ class ArrayComparison(object):
             FORMATS[file_format].write(os.path.abspath(os.path.join(self.generate_dir, filename)), array, **write_kwargs)
 
             pytest.skip("Skipping test, since generating data")
+
+
+class ArrayInterceptor:
+    """
+    This is used in place of ArrayComparison when the array comparison option is not used,
+    to make sure that we still intercept arrays returned by tests.
+    """
+
+    def __init__(self, config):
+        self.config = config
+        self.return_value = {}
+
+    @pytest.hookimpl(hookwrapper=True)
+    def pytest_runtest_call(self, item):
+
+        if item.get_closest_marker('array_compare') is not None:
+            wrap_array_interceptor(self, item)
+
+        yield
+        return
