@@ -7,47 +7,34 @@ on:
     # Run every Sunday at 06:53 UTC
     - cron: 53 6 * * 0
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            python-version: 3.7
-            toxenv: py37-test-pytest46
-          - os: windows-latest
-            python-version: 3.7
-            toxenv: py37-test-pytest50
-          - os: macos-latest
-            python-version: 3.8
-            toxenv: py38-test-pytest52
-          - os: ubuntu-latest
-            python-version: 3.8
-            toxenv: py38-test-pytest53
-          - os: windows-latest
-            python-version: 3.9
-            toxenv: py39-test-pytest60
-          - os: macos-latest
-            python-version: 3.9
-            toxenv: py39-test-pytest61
-          - os: ubuntu-latest
-            python-version: '3.10'
-            toxenv: py310-test-pytest62
-          - os: ubuntu-latest
-            python-version: '3.10'
-            toxenv: py310-test-pytestdev
-
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install tox
-      run: python -m pip install tox
-    - name: Run tox
-      run: tox -v -e ${{ matrix.toxenv }}
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    with:
+      envs: |
+        - linux: codestyle
+        - linux: py37-test-pytestoldest
+        - macos: py37-test-pytest50
+        - windows: py38-test-pytest52
+        - linux: py38-test-pytest53
+        - macos: py39-test-pytest60
+        - windows: py39-test-pytest61
+        - linux: py310-test-pytest62
+        - macos: py310-test-pytest70
+        - windows: py310-test-pytest71
+        - linux: py311-test-pytest72
+        - macos: py311-test-pytest73
+        - windows: py312-test-pytest74
+        - linux: py312-test-devdeps
+  publish:
+    needs: tests
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@v1
+    with:
+      test_extras: test
+      test_command: pytest $GITHUB_WORKSPACE/tests; pytest --arraydiff $GITHUB_WORKSPACE/tests
+    secrets:
+      pypi_token: ${{ secrets.pypi_password }}

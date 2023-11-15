@@ -4,6 +4,9 @@ import tempfile
 
 import pytest
 import numpy as np
+from packaging.version import Version
+
+NUMPY_LT_2_0 = Version(np.__version__) < Version("2.0.dev")
 
 reference_dir = 'baseline'
 
@@ -18,6 +21,7 @@ def test_succeeds_func_text():
     return np.arange(3 * 5).reshape((3, 5))
 
 
+@pytest.mark.skipif(not NUMPY_LT_2_0, reason="AttributeError: `np.unicode_` was removed in the NumPy 2.0 release. Use `np.str_` instead.")
 @pytest.mark.array_compare(file_format='pd_hdf', reference_dir=reference_dir)
 def test_succeeds_func_pdhdf():
     pd = pytest.importorskip('pandas')
