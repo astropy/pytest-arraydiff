@@ -6,6 +6,10 @@
     :target: https://github.com/astropy/pytest-arraydiff/actions
     :alt: CI Status
 
+.. image:: https://img.shields.io/pypi/v/pytest-arraydiff.svg
+    :target: https://pypi.org/project/pytest-arraydiff
+    :alt: PyPI Status
+
 About
 -----
 
