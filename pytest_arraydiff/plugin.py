@@ -28,9 +28,6 @@
 #
 #   https://github.com/astrofrog/pytest-mpl
 
-
-from functools import wraps
-
 import os
 import abc
 import shutil
@@ -149,7 +146,7 @@ class PDHDFDiff(BaseDiff):
 
     @staticmethod
     def write(filename, data, **kwargs):
-        import pandas as pd
+        import pandas as pd  # noqa: F401
         key = os.path.basename(filename).replace('.h5', '')
         return data.to_hdf(filename, key, **kwargs)
 
@@ -201,7 +198,7 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.getini('markers').append(
         'array_compare: for functions using array comparison')
-    
+
     if config.getoption("--arraydiff") or config.getoption("--arraydiff-generate-path") is not None:
 
         reference_dir = config.getoption("--arraydiff-reference-path")
