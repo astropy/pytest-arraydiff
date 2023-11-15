@@ -23,12 +23,12 @@ jobs:
         - linux: py38-test-pytest53
         - macos: py39-test-pytest60
         - windows: py39-test-pytest61
-        - linux: py39-test-pytest62
+        - linux: py310-test-pytest62
         - macos: py310-test-pytest70
         - windows: py310-test-pytest71
-        - linux: py310-test-pytest72
-        - macos: py310-test-pytest73
-        - windows: py311-test-pytest74
+        - linux: py311-test-pytest72
+        - macos: py311-test-pytest73
+        - windows: py312-test-pytest74
         - linux: py312-test-devdeps
   publish:
     needs: tests

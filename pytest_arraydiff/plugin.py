@@ -148,7 +148,7 @@ class PDHDFDiff(BaseDiff):
     def write(filename, data, **kwargs):
         import pandas as pd  # noqa: F401
         key = os.path.basename(filename).replace('.h5', '')
-        return data.to_hdf(filename, key, **kwargs)
+        return data.to_hdf(filename, key=key, **kwargs)
 
     @classmethod
     def compare(cls, reference_file, test_file, atol=None, rtol=None):
