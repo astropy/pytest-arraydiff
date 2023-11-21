@@ -1,6 +1,8 @@
 0.7 (unreleased)
 ----------------
 
+- Fix broken ``single_reference=True`` usage. [#43]
+
 0.6 (2023-11-15)
 ----------------
 
