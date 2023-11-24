@@ -311,7 +311,7 @@ class ArrayComparison(object):
         filename = compare.kwargs.get('filename', None)
         if filename is None:
             if single_reference:
-                filename = item.function + '.' + extension
+                filename = item.originalname + '.' + extension
             else:
                 filename = item.name + '.' + extension
                 filename = filename.replace('[', '_').replace(']', '_')
