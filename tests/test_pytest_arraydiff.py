@@ -162,5 +162,17 @@ def test_single_reference(spam):
     return np.ones((3, 4)) * 1.6 + 1.4
 
 
+class TestSingleReferenceClass:
+
+    @pytest.mark.array_compare(
+        reference_dir=reference_dir,
+        atol=1.5,
+        file_format='fits',
+        single_reference=True)
+    @pytest.mark.parametrize('spam', ('egg', 'bacon'))
+    def test_single_reference(self, spam):
+        return np.ones((3, 4)) * 1.6 + 1.4
+
+
 def test_nofile():
     pass
