@@ -310,8 +310,10 @@ class ArrayComparison(object):
         # Find test name to use as plot name
         filename = compare.kwargs.get('filename', None)
         if filename is None:
-            filename = item.name + '.' + extension
-            if not single_reference:
+            if single_reference:
+                filename = item.originalname + '.' + extension
+            else:
+                filename = item.name + '.' + extension
                 filename = filename.replace('[', '_').replace(']', '_')
                 filename = filename.replace('_.' + extension, '.' + extension)
 
