@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   tests:
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@924441154cf3053034c6513d5e06c69d262fb9a6  # v1.13.0
     with:
       envs: |
         - linux: codestyle
@@ -33,7 +33,7 @@ jobs:
         - linux: py312-test-devdeps
   publish:
     needs: tests
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@v1
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@924441154cf3053034c6513d5e06c69d262fb9a6  # v1.13.0
     with:
       test_extras: test
       test_command: pytest $GITHUB_WORKSPACE/tests; pytest --arraydiff $GITHUB_WORKSPACE/tests
