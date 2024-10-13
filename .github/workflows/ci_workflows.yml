@@ -18,9 +18,7 @@ jobs:
     with:
       envs: |
         - linux: codestyle
-        - linux: py37-test-pytestoldest
-        - macos: py37-test-pytest50
-        - windows: py38-test-pytest52
+        - windows: py38-test-pytestoldest
         - linux: py38-test-pytest53
         - macos: py39-test-pytest60
         - windows: py39-test-pytest61
