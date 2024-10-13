@@ -40,7 +40,7 @@ def test_succeeds_func_fits_hdu():
     return fits.PrimaryHDU(np.arange(3 * 5).reshape((3, 5)).astype(np.int64))
 
 
-class TestClass(object):
+class TestClass:
 
     @pytest.mark.array_compare(file_format='fits', reference_dir=reference_dir)
     def test_succeeds_class(self):
@@ -66,11 +66,11 @@ def test_fails():
         f.write(TEST_FAILING)
 
     # If we use --arraydiff, it should detect that the file is missing
-    code = subprocess.call('pytest --arraydiff {0}'.format(test_file), shell=True)
+    code = subprocess.call(f'pytest --arraydiff {test_file}', shell=True)
     assert code != 0
 
     # If we don't use --arraydiff option, the test should succeed
-    code = subprocess.call('pytest {0}'.format(test_file), shell=True)
+    code = subprocess.call(f'pytest {test_file}', shell=True)
     assert code == 0
 
 
@@ -102,7 +102,7 @@ def test_generate(file_format):
         assert b'File not found for comparison test' in grepexc.output
 
     # If we do generate, the test should succeed and a new file will appear
-    code = subprocess.call(['pytest', '--arraydiff-generate-path={0}'.format(gen_dir), test_file],
+    code = subprocess.call(['pytest', f'--arraydiff-generate-path={gen_dir}', test_file],
                            timeout=10)
     assert code == 0
     assert os.path.exists(os.path.join(gen_dir, 'test_gen.' + ('fits' if file_format == 'fits' else 'txt')))
@@ -130,8 +130,8 @@ def test_default_format(file_format):
     gen_dir = os.path.join(tmpdir, 'spam', 'egg')
 
     # If we do generate, the test should succeed and a new file will appear
-    code = subprocess.call('pytest -s --arraydiff-default-format={0}'
-                           ' --arraydiff-generate-path={1} {2}'.format(file_format, gen_dir, test_file), shell=True)
+    code = subprocess.call('pytest -s --arraydiff-default-format={}'
+                           ' --arraydiff-generate-path={} {}'.format(file_format, gen_dir, test_file), shell=True)
     assert code == 0
     assert os.path.exists(os.path.join(gen_dir, 'test_default.' + ('fits' if file_format == 'fits' else 'txt')))
 
