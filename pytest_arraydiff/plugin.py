@@ -309,9 +309,16 @@ class ArrayComparison:
 
         # Find test name to use as plot name
         filename = compare.kwargs.get('filename', None)
+        derive_classes = compare.kwargs.get('derive_classes', False)
         if filename is None:
             if single_reference:
                 filename = item.originalname + '.' + extension
+            elif derive_classes:
+                filename = test_name
+                filename = filename.replace('.', '_')
+                filename = filename + '.' + extension
+                filename = filename.replace('[', '_').replace(']', '_')
+                filename = filename.replace('_.' + extension, '.' + extension)
             else:
                 filename = item.name + '.' + extension
                 filename = filename.replace('[', '_').replace(']', '_')
