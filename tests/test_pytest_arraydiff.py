@@ -177,3 +177,54 @@ class TestSingleReferenceClass:
 
 def test_nofile():
     pass
+
+class BaseTestClass:
+    arrays = None
+    @pytest.mark.array_compare(reference_dir=reference_dir, file_format='text', derive_classes=True)
+    def test_array_one(self):
+        return self.array
+class TestDerivedOne(BaseTestClass):
+    array = np.arange(3 * 4).reshape((3, 4))
+    
+class TestDerivedTwo(BaseTestClass):
+    array = np.arange(2 * 5).reshape((2, 5))
+
+
+
+DERIVED_FAILING = """
+import pytest
+import numpy as np
+class BaseTestClass:
+    arrays = None
+    @pytest.mark.array_compare(reference_dir="{reference_dir}", file_format='text')
+    def test_array_one(self):
+        return self.array
+class TestDerivedOne(BaseTestClass):
+    array = np.arange(3 * 4).reshape((3, 4))
+    
+class TestDerivedTwo(BaseTestClass):
+    array = np.arange(2 * 5).reshape((2, 5))
+"""
+
+
+def test_derived_fails():
+
+    tmpdir = tempfile.mkdtemp()
+
+    test_file = os.path.join(tmpdir, 'test.py')
+    gen_dir = os.path.join(tmpdir, 'spam', 'egg')
+    with open(test_file, 'w') as f:
+        f.write(DERIVED_FAILING.format(reference_dir=gen_dir))
+
+    # If we use --arraydiff, it should detect that the file is missing
+    code = subprocess.call(f'pytest --arraydiff {test_file}', shell=True)
+    assert code != 0
+
+    # when we generate the test files without the derive option the generation should succeed
+    code = subprocess.call(['pytest', f'--arraydiff-generate-path={gen_dir}', test_file],
+                           timeout=10)
+    assert code == 0
+
+    # but when the test is run again, it should fail, because the different tests are looking at the same file
+    code = subprocess.call(f'pytest --arraydiff {test_file}', shell=True)
+    assert code != 0
