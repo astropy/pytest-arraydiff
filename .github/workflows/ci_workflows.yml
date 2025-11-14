@@ -18,8 +18,8 @@ jobs:
     with:
       envs: |
         - linux: codestyle
-        - windows: py38-test-pytestoldest
-        - linux: py38-test-pytest53
+        - windows: py39-test-pytestoldest
+        - linux: py39-test-pytest53
         - macos: py39-test-pytest60
         - windows: py39-test-pytest61
         - linux: py310-test-pytest62
@@ -28,12 +28,15 @@ jobs:
         - linux: py311-test-pytest72
         - macos: py311-test-pytest73
         - windows: py312-test-pytest74
-        - linux: py312-test-devdeps
+        - linux: py313-test-pytest83
+        - linux: py313-test-pytest90
+        - linux: py313-test-devdeps
   publish:
     needs: tests
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@28e947497bed4d6ec3fa1d66d198e95a1d17bc63 # v2.2.1
     with:
       test_extras: test
       test_command: pytest $GITHUB_WORKSPACE/tests; pytest --arraydiff $GITHUB_WORKSPACE/tests
+      python-version: '3.9'
     secrets:
       pypi_token: ${{ secrets.pypi_password }}
