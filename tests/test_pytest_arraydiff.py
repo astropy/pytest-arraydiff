@@ -24,6 +24,7 @@ def test_succeeds_func_text():
 @pytest.mark.skipif(not NUMPY_LT_2_0, reason="AttributeError: `np.unicode_` was removed in the NumPy 2.0 release. Use `np.str_` instead.")
 @pytest.mark.array_compare(file_format='pd_hdf', reference_dir=reference_dir)
 def test_succeeds_func_pdhdf():
+    pytest.importorskip('tables')  # Need this "optional" dependency
     pd = pytest.importorskip('pandas')
     return pd.DataFrame(data=np.arange(20, dtype='int64'),
                         columns=['test_data'])

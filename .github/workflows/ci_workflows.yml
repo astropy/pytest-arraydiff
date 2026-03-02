@@ -14,12 +14,12 @@ concurrency:
 
 jobs:
   tests:
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@8c0fde6f7e926df6ed7057255d29afa9c1ad5320 # v1.16.0
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@99401c364fa51c9c507d3cd6d272049278ac0b2c # v2.4.0
     with:
       envs: |
         - linux: codestyle
-        - windows: py38-test-pytestoldest
-        - linux: py38-test-pytest53
+        - windows: py39-test-pytestoldest
+        - linux: py39-test-pytest53
         - macos: py39-test-pytest60
         - windows: py39-test-pytest61
         - linux: py310-test-pytest62
@@ -28,12 +28,15 @@ jobs:
         - linux: py311-test-pytest72
         - macos: py311-test-pytest73
         - windows: py312-test-pytest74
-        - linux: py312-test-devdeps
+        - linux: py313-test-pytest83
+        - linux: py313-test-pytest90
+        - linux: py313-test-devdeps
   publish:
     needs: tests
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@8c0fde6f7e926df6ed7057255d29afa9c1ad5320 # v1.16.0
+    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish_pure_python.yml@99401c364fa51c9c507d3cd6d272049278ac0b2c # v2.4.0
     with:
       test_extras: test
       test_command: pytest $GITHUB_WORKSPACE/tests; pytest --arraydiff $GITHUB_WORKSPACE/tests
+      python-version: '3.9'
     secrets:
       pypi_token: ${{ secrets.pypi_password }}
