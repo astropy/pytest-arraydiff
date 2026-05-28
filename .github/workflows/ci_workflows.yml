@@ -30,6 +30,9 @@ jobs:
         - windows: py312-test-pytest74
         - linux: py313-test-pytest83
         - linux: py313-test-pytest90
+        - linux: py313-test-parallel
+        - linux: py313t-test
+        - linux: py313t-test-parallel
         - linux: py313-test-devdeps
   publish:
     needs: tests

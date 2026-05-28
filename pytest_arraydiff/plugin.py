@@ -240,12 +240,18 @@ def wrap_array_interceptor(plugin, item):
     # Only intercept array on marked array tests
     if item.get_closest_marker('array_compare') is not None:
 
+        # Guard against wrapping more than once (e.g. when pytest-run-parallel
+        # runs the same item multiple times).
+        if getattr(item.obj, '_arraydiff_wrapped', False):
+            return
+
         # Use the full test name as a key to ensure correct array is being retrieved
         test_name = generate_test_name(item)
 
         def array_interceptor(store, obj):
             def wrapper(*args, **kwargs):
                 store.return_value[test_name] = obj(*args, **kwargs)
+            wrapper._arraydiff_wrapped = True
             return wrapper
 
         item.obj = array_interceptor(plugin, item.obj)
@@ -259,6 +265,10 @@ class ArrayComparison:
         self.generate_dir = generate_dir
         self.default_format = default_format
         self.return_value = {}
+
+    def pytest_collection_modifyitems(self, items):
+        for item in items:
+            wrap_array_interceptor(self, item)
 
     @pytest.hookimpl(hookwrapper=True)
     def pytest_runtest_call(self, item):
@@ -298,8 +308,6 @@ class ArrayComparison:
 
         baseline_remote = reference_dir.startswith('http')
 
-        # Run test and get array object
-        wrap_array_interceptor(self, item)
         yield
         test_name = generate_test_name(item)
         if test_name not in self.return_value:
@@ -372,11 +380,11 @@ class ArrayInterceptor:
         self.config = config
         self.return_value = {}
 
-    @pytest.hookimpl(hookwrapper=True)
-    def pytest_runtest_call(self, item):
-
-        if item.get_closest_marker('array_compare') is not None:
+    def pytest_collection_modifyitems(self, items):
+        for item in items:
             wrap_array_interceptor(self, item)
 
+    @pytest.hookimpl(hookwrapper=True)
+    def pytest_runtest_call(self, item):
         yield
         return
