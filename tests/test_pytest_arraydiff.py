@@ -193,12 +193,9 @@ def test_parallel_iterations():
     """Regression test: arraydiff should work with pytest-run-parallel."""
     pytest.importorskip('pytest_run_parallel')
 
-    tmpdir = tempfile.mkdtemp()
-    test_file = os.path.join(tmpdir, 'test.py')
-    with open(test_file, 'w') as f:
-        f.write(TEST_PARALLEL)
-
-    gen_dir = os.path.join(tmpdir, 'reference')
+    test_file = tmp_path / 'test.py'
+    test_file.write_test(TEST_PARALLEL)
+    gen_dir = tmp_path / 'reference'
 
     # Generate the reference file first
     code = subprocess.call(
