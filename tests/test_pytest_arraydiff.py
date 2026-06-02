@@ -177,3 +177,32 @@ class TestSingleReferenceClass:
 
 def test_nofile():
     pass
+
+
+TEST_PARALLEL = """
+import pytest
+import numpy as np
+from astropy.io import fits
+@pytest.mark.array_compare(file_format='fits')
+def test_parallel():
+    return fits.PrimaryHDU(np.arange(3 * 5).reshape((3, 5)).astype(np.int64))
+"""
+
+
+def test_parallel_iterations(pytester):
+    """Regression test: arraydiff should work with pytest-run-parallel."""
+    pytest.importorskip('pytest_run_parallel')
+
+    pytester.makepyfile(test_parallel=TEST_PARALLEL)
+    gen_dir = pytester.path / 'reference'
+
+    # Generate the reference file first
+    result = pytester.runpytest_subprocess(f'--arraydiff-generate-path={gen_dir}')
+    assert result.ret == 0
+
+    # Now run with --arraydiff and multiple iterations
+    result = pytester.runpytest_subprocess(
+        '--arraydiff', f'--arraydiff-reference-path={gen_dir}',
+        '--parallel-threads=2', '--iterations=3',
+    )
+    assert result.ret == 0
