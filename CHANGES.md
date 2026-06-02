@@ -1,7 +1,9 @@
-0.7 (unreleased)
+0.7 (2026-05-02)
 ----------------
 
 - Minimum Python version is now 3.9. [#49, #57]
+
+- Fixed compatibility with free-threaded Python. [#63]
 
 0.6.1 (2023-11-27)
 ------------------
