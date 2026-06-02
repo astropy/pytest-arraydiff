@@ -383,8 +383,3 @@ class ArrayInterceptor:
     def pytest_collection_modifyitems(self, items):
         for item in items:
             wrap_array_interceptor(self, item)
-
-    @pytest.hookimpl(hookwrapper=True)
-    def pytest_runtest_call(self, item):
-        yield
-        return

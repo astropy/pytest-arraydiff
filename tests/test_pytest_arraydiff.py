@@ -189,25 +189,20 @@ def test_parallel():
 """
 
 
-def test_parallel_iterations():
+def test_parallel_iterations(pytester):
     """Regression test: arraydiff should work with pytest-run-parallel."""
     pytest.importorskip('pytest_run_parallel')
 
-    test_file = tmp_path / 'test.py'
-    test_file.write_test(TEST_PARALLEL)
-    gen_dir = tmp_path / 'reference'
+    pytester.makepyfile(test_parallel=TEST_PARALLEL)
+    gen_dir = pytester.path / 'reference'
 
     # Generate the reference file first
-    code = subprocess.call(
-        ['pytest', f'--arraydiff-generate-path={gen_dir}', test_file],
-        timeout=30,
-    )
-    assert code == 0
+    result = pytester.runpytest_subprocess(f'--arraydiff-generate-path={gen_dir}')
+    assert result.ret == 0
 
     # Now run with --arraydiff and multiple iterations
-    code = subprocess.call(
-        ['pytest', '--arraydiff', f'--arraydiff-reference-path={gen_dir}',
-         '--parallel-threads=2', '--iterations=3', test_file],
-        timeout=30,
+    result = pytester.runpytest_subprocess(
+        '--arraydiff', f'--arraydiff-reference-path={gen_dir}',
+        '--parallel-threads=2', '--iterations=3',
     )
-    assert code == 0
+    assert result.ret == 0
