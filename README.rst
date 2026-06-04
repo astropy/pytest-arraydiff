@@ -69,7 +69,7 @@ function returns a plain Numpy array::
 
     @pytest.mark.array_compare
     def test_succeeds():
-        return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+        return np.arange(3 * 5).reshape((3, 5))
 
 To generate the reference data files, run the tests with the
 ``--arraydiff-generate-path`` option with the name of the directory
@@ -106,7 +106,7 @@ it::
     import numpy as np
 
     def test_succeeds(array_compare):
-        array_compare.check(np.arange(3 * 5 * 4).reshape((3, 5, 4)))
+        array_compare.check(np.arange(3 * 5).reshape((3, 5)))
 
 ``array_compare.check`` accepts the same keyword arguments as the marker
 (``file_format``, ``atol``, ``rtol``, ``reference_dir``, and so on), and
