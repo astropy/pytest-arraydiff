@@ -266,10 +266,6 @@ class ArrayComparison:
         self.default_format = default_format
         self.return_value = {}
 
-    def pytest_collection_modifyitems(self, items):
-        for item in items:
-            wrap_array_interceptor(self, item)
-
     @pytest.hookimpl(hookwrapper=True)
     def pytest_runtest_call(self, item):
 
@@ -308,6 +304,8 @@ class ArrayComparison:
 
         baseline_remote = reference_dir.startswith('http')
 
+        # Run test and get array object
+        wrap_array_interceptor(self, item)
         yield
         test_name = generate_test_name(item)
         if test_name not in self.return_value:
@@ -380,6 +378,11 @@ class ArrayInterceptor:
         self.config = config
         self.return_value = {}
 
-    def pytest_collection_modifyitems(self, items):
-        for item in items:
+    @pytest.hookimpl(hookwrapper=True)
+    def pytest_runtest_call(self, item):
+
+        if item.get_closest_marker('array_compare') is not None:
             wrap_array_interceptor(self, item)
+
+        yield
+        return
