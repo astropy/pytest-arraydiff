@@ -403,45 +403,25 @@ class ArrayInterceptor:
             wrap_array_interceptor(self, item)
 
 
-def _get_comparison_plugin(config):
-    """
-    Return the registered ``ArrayComparison`` plugin, or ``None`` if array
-    comparison is not enabled for this run (no ``--arraydiff`` and no
-    ``--arraydiff-generate-path``).
-    """
-    plugin = config.pluginmanager.get_plugin('arraydiff')
-    return plugin if isinstance(plugin, ArrayComparison) else None
-
-
 class ArrayCompareFixture:
     """
-    Fixture-based entry point for array comparison, as an alternative to the
-    ``@pytest.mark.array_compare`` marker.
+    Object returned by the ``array_compare`` fixture; call ``check(array,
+    **kwargs)`` to compare an array, where ``kwargs`` accepts the same options
+    as the ``@pytest.mark.array_compare`` marker.
 
-    Instead of marking a test and returning an array, a test requests the
-    ``array_compare`` fixture and calls ``array_compare.check(array, **kwargs)``
-    (or ``array_compare(array, **kwargs)``).  ``kwargs`` accepts the same
-    options as the marker: ``file_format``, ``extension``, ``atol``, ``rtol``,
-    ``single_reference``, ``write_kwargs``, ``reference_dir``, ``filename``.
-
-    Crucially, this never replaces ``item.obj``: the test function is collected
-    and run exactly as written.  That means plugins which introspect the test
-    keep working -- in particular pytest-run-parallel, which reads the test
-    source to auto-detect thread-unsafe calls (e.g. ``warnings.catch_warnings``)
-    and is currently defeated by the marker path swapping in a wrapper function.
+    Unlike the marker, this never replaces ``item.obj``, so the test function
+    is collected and run as written and plugins that introspect the test source
+    keep working (notably pytest-run-parallel's thread-unsafe-call detection).
     """
 
     def __init__(self, request, comparison):
         self._request = request
         self._comparison = comparison
 
-    def __call__(self, array, **kwargs):
-        return self.check(array, **kwargs)
-
     def check(self, array, **kwargs):
         if self._comparison is None:
-            # Array comparison was not requested for this run; behave as a
-            # no-op, mirroring what the marker-based API does in that case.
+            # Array comparison not requested this run (no --arraydiff); no-op,
+            # mirroring the marker-based API.
             return
         _compare_array(array, self._request.node, kwargs,
                        plugin_reference_dir=self._comparison.reference_dir,
@@ -452,12 +432,11 @@ class ArrayCompareFixture:
 @pytest.fixture
 def array_compare(request):
     """
-    Fixture for comparing an array against a stored reference file.
-
-    Usage::
+    Fixture alternative to the ``@pytest.mark.array_compare`` marker::
 
         def test_something(array_compare):
-            result = compute()
-            array_compare.check(result, atol=1e-6)
+            array_compare.check(compute(), atol=1e-6)
     """
-    return ArrayCompareFixture(request, _get_comparison_plugin(request.config))
+    # 'arraydiff' only resolves when comparison is enabled (see pytest_configure)
+    comparison = request.config.pluginmanager.get_plugin('arraydiff')
+    return ArrayCompareFixture(request, comparison)
