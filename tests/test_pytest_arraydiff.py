@@ -206,3 +206,78 @@ def test_parallel_iterations(pytester):
         '--parallel-threads=2', '--iterations=3',
     )
     assert result.ret == 0
+
+
+# ---------------------------------------------------------------------------
+# Fixture-based API (alternative to the @pytest.mark.array_compare marker)
+# ---------------------------------------------------------------------------
+
+TEST_FIXTURE = """
+import numpy as np
+
+def test_fixture(array_compare):
+    array_compare.check(np.arange(3 * 5).reshape((3, 5)), file_format='text')
+"""
+
+
+def test_fixture_api(pytester):
+    """The array_compare fixture can generate, compare, and no-op."""
+    pytester.makepyfile(test_fixture=TEST_FIXTURE)
+    gen_dir = pytester.path / 'reference'
+
+    # Generating writes the reference and skips
+    result = pytester.runpytest_subprocess(f'--arraydiff-generate-path={gen_dir}')
+    assert result.ret == 0
+    assert (gen_dir / 'test_fixture.txt').exists()
+
+    # With --arraydiff it compares against the generated reference and passes
+    result = pytester.runpytest_subprocess(
+        '--arraydiff', f'--arraydiff-reference-path={gen_dir}')
+    assert result.ret == 0
+
+    # Without --arraydiff the fixture is a no-op and the test still passes
+    result = pytester.runpytest_subprocess()
+    assert result.ret == 0
+
+
+TEST_FIXTURE_PARALLEL = """
+import threading
+import warnings
+import numpy as np
+
+_threads = set()
+
+def test_fixture_parallel(array_compare):
+    # A known thread-unsafe call. pytest-run-parallel auto-detects this by
+    # reading the test source -- which only works if item.obj was not replaced
+    # by a wrapper. The fixture API never replaces item.obj, so detection holds
+    # and this test is run single-threaded; hence only one thread id is seen.
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+    _threads.add(threading.get_ident())
+    assert len(_threads) == 1
+    array_compare.check(np.arange(3 * 5).reshape((3, 5)), file_format='text')
+"""
+
+
+def test_fixture_parallel_detection(pytester):
+    """Regression: the fixture must not blind pytest-run-parallel's detection
+    of thread-unsafe calls (unlike the marker path, which swaps item.obj)."""
+    pytest.importorskip('pytest_run_parallel')
+
+    pytester.makepyfile(test_fp=TEST_FIXTURE_PARALLEL)
+    gen_dir = pytester.path / 'reference'
+
+    result = pytester.runpytest_subprocess(f'--arraydiff-generate-path={gen_dir}')
+    assert result.ret == 0
+
+    # With --mark-warnings-as-unsafe, catch_warnings is unconditionally
+    # thread-unsafe (otherwise its safety depends on the interpreter). If
+    # detection works (item.obj intact), the test runs single-threaded and
+    # passes; if detection were defeated it would run in 2 threads and the
+    # assert fails.
+    result = pytester.runpytest_subprocess(
+        '--arraydiff', f'--arraydiff-reference-path={gen_dir}',
+        '--parallel-threads=2', '--iterations=3', '--mark-warnings-as-unsafe',
+    )
+    assert result.ret == 0

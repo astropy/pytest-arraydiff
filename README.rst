@@ -69,7 +69,7 @@ function returns a plain Numpy array::
 
     @pytest.mark.array_compare
     def test_succeeds():
-        return np.arange(3 * 5 * 4).reshape((3, 5, 4))
+        return np.arange(3 * 5).reshape((3, 5))
 
 To generate the reference data files, run the tests with the
 ``--arraydiff-generate-path`` option with the name of the directory
@@ -94,6 +94,27 @@ You can then run the tests simply with::
 and the tests will pass if the arrays are the same. If you omit the
 ``--arraydiff`` option, the tests will run but will only check that the
 code runs without checking the output arrays.
+
+Fixture-based usage
+-------------------
+
+As an alternative to the marker, you can request the ``array_compare``
+fixture and pass the array to its ``check`` method instead of returning
+it::
+
+    python
+    import numpy as np
+
+    def test_succeeds(array_compare):
+        array_compare.check(np.arange(3 * 5).reshape((3, 5)))
+
+``array_compare.check`` accepts the same keyword arguments as the marker
+(``file_format``, ``atol``, ``rtol``, ``reference_dir``, and so on), and
+``--arraydiff``/``--arraydiff-generate-path`` behave identically. Unlike
+the marker, the fixture does not replace the test function, so plugins
+that introspect the test source keep working -- in particular
+``pytest-run-parallel`` can still auto-detect thread-unsafe calls in the
+test body.
 
 Options
 -------

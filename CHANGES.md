@@ -1,3 +1,11 @@
+0.8 (unreleased)
+----------------
+
+- Added an ``array_compare`` fixture as an alternative to the
+  ``@pytest.mark.array_compare`` marker. Because it does not replace the test
+  function, it does not interfere with pytest-run-parallel's detection of
+  thread-unsafe calls.
+
 0.7 (2026-05-02)
 ----------------
 

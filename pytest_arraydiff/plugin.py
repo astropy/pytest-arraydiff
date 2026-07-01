@@ -217,7 +217,8 @@ def pytest_configure(config):
         config.pluginmanager.register(ArrayComparison(config,
                                                       reference_dir=reference_dir,
                                                       generate_dir=generate_dir,
-                                                      default_format=default_format))
+                                                      default_format=default_format),
+                                      name='arraydiff')
     else:
         config.pluginmanager.register(ArrayInterceptor(config))
 
@@ -231,6 +232,100 @@ def generate_test_name(item):
     else:
         name = f"{item.module.__name__}.{item.name}"
     return name
+
+
+def _compare_array(array, item, options, *, plugin_reference_dir,
+                   generate_dir, default_format):
+    """
+    Compare ``array`` against the reference for ``item``, or, in generate mode,
+    write it out.
+
+    ``options`` is a mapping accepting the same keys as the ``array_compare``
+    marker and the ``array_compare`` fixture's ``check`` method (``file_format``,
+    ``extension``, ``atol``, ``rtol``, ``single_reference``, ``write_kwargs``,
+    ``reference_dir``, ``filename``).  This is the shared core used both by the
+    marker-based API (which captures the test's return value) and the
+    fixture-based API (where the test passes the array in explicitly).
+    """
+    file_format = options.get('file_format', default_format)
+
+    if file_format not in FORMATS:
+        raise ValueError(f"Unknown format: {file_format}")
+
+    extension = options.get('extension', FORMATS[file_format].extension)
+
+    atol = options.get('atol', 0.)
+    rtol = options.get('rtol', 1e-7)
+
+    single_reference = options.get('single_reference', False)
+
+    write_kwargs = options.get('write_kwargs', {})
+
+    reference_dir = options.get('reference_dir', None)
+    if reference_dir is None:
+        if plugin_reference_dir is None:
+            reference_dir = os.path.join(os.path.dirname(item.fspath.strpath), 'reference')
+        else:
+            reference_dir = plugin_reference_dir
+    else:
+        if not reference_dir.startswith(('http://', 'https://')):
+            reference_dir = os.path.join(os.path.dirname(item.fspath.strpath), reference_dir)
+
+    baseline_remote = reference_dir.startswith('http')
+
+    # Find test name to use as the reference filename
+    filename = options.get('filename', None)
+    if filename is None:
+        if single_reference:
+            filename = item.originalname + '.' + extension
+        else:
+            filename = item.name + '.' + extension
+            filename = filename.replace('[', '_').replace(']', '_')
+            filename = filename.replace('_.' + extension, '.' + extension)
+
+    # What we do now depends on whether we are generating the reference
+    # files or simply running the test.
+    if generate_dir is None:
+
+        # Save the array
+        result_dir = tempfile.mkdtemp()
+        test_array = os.path.abspath(os.path.join(result_dir, filename))
+
+        FORMATS[file_format].write(test_array, array, **write_kwargs)
+
+        # Find path to baseline array
+        if baseline_remote:
+            baseline_file_ref = _download_file(reference_dir + filename)
+        else:
+            baseline_file_ref = os.path.abspath(os.path.join(os.path.dirname(item.fspath.strpath), reference_dir, filename))
+
+        if not os.path.exists(baseline_file_ref):
+            raise Exception("""File not found for comparison test
+                            Generated file:
+                            \t{test}
+                            This is expected for new tests.""".format(
+                test=test_array))
+
+        # setuptools may put the baseline arrays in non-accessible places,
+        # copy to our tmpdir to be sure to keep them in case of failure
+        baseline_file = os.path.abspath(os.path.join(result_dir, 'reference-' + filename))
+        shutil.copyfile(baseline_file_ref, baseline_file)
+
+        identical, msg = FORMATS[file_format].compare(baseline_file, test_array, atol=atol, rtol=rtol)
+
+        if identical:
+            shutil.rmtree(result_dir)
+        else:
+            raise Exception(msg)
+
+    else:
+
+        if not os.path.exists(generate_dir):
+            os.makedirs(generate_dir)
+
+        FORMATS[file_format].write(os.path.abspath(os.path.join(generate_dir, filename)), array, **write_kwargs)
+
+        pytest.skip("Skipping test, since generating data")
 
 
 def wrap_array_interceptor(plugin, item):
@@ -279,95 +374,18 @@ class ArrayComparison:
             yield
             return
 
-        file_format = compare.kwargs.get('file_format', self.default_format)
-
-        if file_format not in FORMATS:
-            raise ValueError(f"Unknown format: {file_format}")
-
-        if 'extension' in compare.kwargs:
-            extension = compare.kwargs['extension']
-        else:
-            extension = FORMATS[file_format].extension
-
-        atol = compare.kwargs.get('atol', 0.)
-        rtol = compare.kwargs.get('rtol', 1e-7)
-
-        single_reference = compare.kwargs.get('single_reference', False)
-
-        write_kwargs = compare.kwargs.get('write_kwargs', {})
-
-        reference_dir = compare.kwargs.get('reference_dir', None)
-        if reference_dir is None:
-            if self.reference_dir is None:
-                reference_dir = os.path.join(os.path.dirname(item.fspath.strpath), 'reference')
-            else:
-                reference_dir = self.reference_dir
-        else:
-            if not reference_dir.startswith(('http://', 'https://')):
-                reference_dir = os.path.join(os.path.dirname(item.fspath.strpath), reference_dir)
-
-        baseline_remote = reference_dir.startswith('http')
-
         yield
+
         test_name = generate_test_name(item)
         if test_name not in self.return_value:
             # Test function did not complete successfully
             return
         array = self.return_value[test_name]
 
-        # Find test name to use as plot name
-        filename = compare.kwargs.get('filename', None)
-        if filename is None:
-            if single_reference:
-                filename = item.originalname + '.' + extension
-            else:
-                filename = item.name + '.' + extension
-                filename = filename.replace('[', '_').replace(']', '_')
-                filename = filename.replace('_.' + extension, '.' + extension)
-
-        # What we do now depends on whether we are generating the reference
-        # files or simply running the test.
-        if self.generate_dir is None:
-
-            # Save the figure
-            result_dir = tempfile.mkdtemp()
-            test_array = os.path.abspath(os.path.join(result_dir, filename))
-
-            FORMATS[file_format].write(test_array, array, **write_kwargs)
-
-            # Find path to baseline array
-            if baseline_remote:
-                baseline_file_ref = _download_file(reference_dir + filename)
-            else:
-                baseline_file_ref = os.path.abspath(os.path.join(os.path.dirname(item.fspath.strpath), reference_dir, filename))
-
-            if not os.path.exists(baseline_file_ref):
-                raise Exception("""File not found for comparison test
-                                Generated file:
-                                \t{test}
-                                This is expected for new tests.""".format(
-                    test=test_array))
-
-            # setuptools may put the baseline arrays in non-accessible places,
-            # copy to our tmpdir to be sure to keep them in case of failure
-            baseline_file = os.path.abspath(os.path.join(result_dir, 'reference-' + filename))
-            shutil.copyfile(baseline_file_ref, baseline_file)
-
-            identical, msg = FORMATS[file_format].compare(baseline_file, test_array, atol=atol, rtol=rtol)
-
-            if identical:
-                shutil.rmtree(result_dir)
-            else:
-                raise Exception(msg)
-
-        else:
-
-            if not os.path.exists(self.generate_dir):
-                os.makedirs(self.generate_dir)
-
-            FORMATS[file_format].write(os.path.abspath(os.path.join(self.generate_dir, filename)), array, **write_kwargs)
-
-            pytest.skip("Skipping test, since generating data")
+        _compare_array(array, item, compare.kwargs,
+                       plugin_reference_dir=self.reference_dir,
+                       generate_dir=self.generate_dir,
+                       default_format=self.default_format)
 
 
 class ArrayInterceptor:
@@ -383,3 +401,42 @@ class ArrayInterceptor:
     def pytest_collection_modifyitems(self, items):
         for item in items:
             wrap_array_interceptor(self, item)
+
+
+class ArrayCompareFixture:
+    """
+    Object returned by the ``array_compare`` fixture; call ``check(array,
+    **kwargs)`` to compare an array, where ``kwargs`` accepts the same options
+    as the ``@pytest.mark.array_compare`` marker.
+
+    Unlike the marker, this never replaces ``item.obj``, so the test function
+    is collected and run as written and plugins that introspect the test source
+    keep working (notably pytest-run-parallel's thread-unsafe-call detection).
+    """
+
+    def __init__(self, request, comparison):
+        self._request = request
+        self._comparison = comparison
+
+    def check(self, array, **kwargs):
+        if self._comparison is None:
+            # Array comparison not requested this run (no --arraydiff); no-op,
+            # mirroring the marker-based API.
+            return
+        _compare_array(array, self._request.node, kwargs,
+                       plugin_reference_dir=self._comparison.reference_dir,
+                       generate_dir=self._comparison.generate_dir,
+                       default_format=self._comparison.default_format)
+
+
+@pytest.fixture
+def array_compare(request):
+    """
+    Fixture alternative to the ``@pytest.mark.array_compare`` marker::
+
+        def test_something(array_compare):
+            array_compare.check(compute(), atol=1e-6)
+    """
+    # 'arraydiff' only resolves when comparison is enabled (see pytest_configure)
+    comparison = request.config.pluginmanager.get_plugin('arraydiff')
+    return ArrayCompareFixture(request, comparison)
