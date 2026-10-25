@@ -37,6 +37,6 @@ jobs:
     with:
       test_extras: test
       test_command: pytest $GITHUB_WORKSPACE/tests; pytest --arraydiff $GITHUB_WORKSPACE/tests
-      python-version: '3.9'
+      python-version: '3.14'
     secrets:
       pypi_token: ${{ secrets.pypi_password }}
